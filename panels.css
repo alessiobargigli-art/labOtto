@@ -2,7 +2,7 @@
 .panel-overlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 1000;
   display: block;
   width: 100vw;
   height: 100dvh;
@@ -12,6 +12,7 @@
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
+  pointer-events: auto !important;
   background:
     linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px) 0 0 / 16px 16px,
     linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px) 0 0 / 16px 16px,
@@ -19,10 +20,17 @@
 }
 
 .panel-overlay[hidden] { display: none; }
+.panel-overlay * { pointer-events: auto; }
+.panel-overlay button,
+.panel-overlay input,
+.panel-overlay label { touch-action: manipulation; }
+.panel-overlay input { -webkit-user-select: text; user-select: text; }
 
 .pixel-panel,
 .settings-panel,
 .leaderboard-panel {
+  position: relative;
+  z-index: 1001;
   width: min(100%, 1080px);
   min-height: calc(100dvh - max(24px, env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)));
   max-height: none;
@@ -37,7 +45,7 @@
 .pixel-panel h2 {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 1002;
   margin: 0 0 16px;
   padding: 8px 4px 10px;
   background: var(--panel);
@@ -47,16 +55,24 @@
 .panel-actions {
   position: sticky;
   bottom: 0;
-  z-index: 3;
+  z-index: 1003;
   margin-top: 18px;
   padding: 12px 0 2px;
   background: linear-gradient(180deg, rgba(16,37,43,0), var(--panel) 28%);
 }
 
+.panel-actions button,
+.speed-choice button,
+.pin-setting-row button {
+  position: relative;
+  z-index: 1004;
+  cursor: pointer;
+}
+
 .leaderboard-head {
   position: sticky;
   top: 58px;
-  z-index: 2;
+  z-index: 1002;
   background: var(--panel);
 }
 
