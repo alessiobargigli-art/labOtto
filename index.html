@@ -22,7 +22,10 @@
         <h1>LAB-8</h1>
         <p>Guido contro le provette del laboratorio orbitale.</p>
       </div>
-      <div class="badge">VERTICAL SLICE 0.4</div>
+      <div class="title-actions">
+        <div class="badge">VERTICAL SLICE 0.4</div>
+        <button id="forceRefresh" class="refresh-button" type="button" aria-label="Aggiorna LAB-8 all'ultima versione">↻ AGGIORNA</button>
+      </div>
     </header>
 
     <section class="game-frame" aria-label="LAB-8 game">
@@ -64,6 +67,31 @@
     </section>
   </main>
 
+  <script>
+    document.querySelector('#forceRefresh').addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      button.textContent = '↻ AGGIORNO...';
+
+      try {
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration) await registration.update();
+        }
+
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.filter((key) => key.startsWith('lab8-')).map((key) => caches.delete(key)));
+        }
+      } catch (error) {
+        console.warn('LAB-8 aggiornamento forzato parziale:', error);
+      }
+
+      const url = new URL(window.location.href);
+      url.searchParams.set('refresh', Date.now().toString());
+      window.location.replace(url.toString());
+    });
+  </script>
   <script type="module" src="game.js"></script>
 </body>
 </html>
