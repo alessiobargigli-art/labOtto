@@ -31,9 +31,6 @@
     });
   }
 
-  overlay.addEventListener('pointerdown', (event) => event.stopPropagation(), true);
-  overlay.addEventListener('pointerup', (event) => event.stopPropagation(), true);
-
   function blocksGameplay() { return open; }
   function formatDate(value) {
     const date = new Date(value);
