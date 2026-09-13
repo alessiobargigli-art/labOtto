@@ -118,12 +118,31 @@ update(0);`);
 assert.equal(run('state.mode'), 'GAME_OVER');
 assert.equal(run('state.running'), false);
 
+run(`globalThis.jumpRise=(CONFIG.jumpVelocity*CONFIG.jumpVelocity)/(2*CONFIG.gravity);
+globalThis.minBulletY=(CONFIG.groundY-guido.height-jumpRise)+15;
+globalThis.maxBulletY=(CONFIG.groundY-guido.height)+15;
+globalThis.weakReachability=BOSS_WEAK_POINT_Y.map((_,i)=>{
+  const w=bossWeakPointRect(i);
+  return { y:w.y, bottom:w.y+w.height, reachable: minBulletY < w.y+w.height && maxBulletY+4 > w.y };
+});`);
+assert.ok(run('weakReachability.every((w)=>w.reachable)'));
+assert.ok(run('bossWeakPointRect(0).y + bossWeakPointRect(0).height - minBulletY > 10'));
+
+run(`resetGame(); enterBossStage(); state.boss.transition=0; state.boss.phase='attack'; state.boss.timer=0.001; state.boss.attackTimer=10; update(0.01);`);
+assert.equal(run('state.boss.phase'), 'vulnerable');
+assert.equal(run('isBossFireVisible()'), true);
+run('state.boss.timer=0.001; update(0.01);');
+assert.equal(run('state.boss.phase'), 'attack');
+assert.equal(run('isBossFireVisible()'), false);
+
 run(`resetGame(); enterBossStage(); state.boss.transition=0; globalThis.scoreBeforeBossWin=state.score;`);
 for (let i = 0; i < 3; i++) {
-  run(`state.boss.phase='vulnerable'; state.boss.timer=10; state.bossAttacks.length=0;
-  { const w=bossWeakPointRect(state.boss.weakIndex); state.bullets.push({x:w.x-2,y:w.y+8,width:10,height:4,vx:CONFIG.bulletSpeed,reflected:false}); }
+  run(`state.boss.phase='vulnerable'; state.boss.timer=10; state.bossAttacks.length=0;`);
+  assert.equal(run('isBossFireVisible()'), true);
+  run(`{ const w=bossWeakPointRect(state.boss.weakIndex); state.bullets.push({x:w.x-2,y:w.y+8,width:10,height:4,vx:CONFIG.bulletSpeed,reflected:false}); }
   update(0.001);`);
   assert.equal(run('state.boss.defeatedWeakPoints'), i + 1);
+  assert.equal(run('isBossFireVisible()'), false);
 }
 assert.equal(run("state.boss.phase"), 'victory');
 assert.ok(run('state.score >= scoreBeforeBossWin + CONFIG.bossWeakPointScore * 3'));

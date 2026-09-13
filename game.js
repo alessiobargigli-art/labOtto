@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 ctx.imageSmoothingEnabled = false;
 
 const MODES = Object.freeze({ RUNNER: 'RUNNER', BOSS: 'BOSS', GAME_OVER: 'GAME_OVER' });
+const BOSS_WEAK_POINT_Y = Object.freeze([142, 200, 260]);
 
 const CONFIG = Object.freeze({
   width: canvas.width,
@@ -502,7 +503,16 @@ function updateBoss(dt) {
 }
 
 function bossWeakPointRect(index) {
-  return { x: CONFIG.width - 190, y: 92 + index * 58, width: 28, height: 24 };
+  const y = BOSS_WEAK_POINT_Y[Math.max(0, Math.min(BOSS_WEAK_POINT_Y.length - 1, index))];
+  return { x: CONFIG.width - 190, y, width: 28, height: 24 };
+}
+
+function isBossFireVisible() {
+  return state.mode === MODES.BOSS && state.boss.phase === 'vulnerable';
+}
+
+function isBossWeakPointBlinkOn() {
+  return isBossFireVisible() && Math.floor(state.boss.timer * 8) % 2 === 0;
 }
 
 function update(dt) {
@@ -738,11 +748,26 @@ function drawBossBackground(p) {
   for (let i = 0; i < 3; i++) {
     const weak = bossWeakPointRect(i);
     const destroyed = i < state.boss.defeatedWeakPoints;
-    const open = state.boss.phase === 'vulnerable' && i === state.boss.weakIndex;
-    pxRect(weak.x, weak.y, weak.width, weak.height, destroyed ? p.sky : p.mid);
-    if (open && !destroyed) {
-      pxRect(weak.x + 5, weak.y + 4, weak.width - 10, weak.height - 8, p.hazard);
-      pxRect(weak.x + 10, weak.y + 8, weak.width - 20, weak.height - 16, p.hot);
+    const open = isBossFireVisible() && i === state.boss.weakIndex;
+    pxRect(weak.x, weak.y, weak.width, weak.height, destroyed ? p.dark : p.mid);
+
+    if (destroyed) {
+      // Finestra rotta: bordo vuoto e crepe pixel ben leggibili dopo il colpo.
+      pxRect(weak.x + 4, weak.y + 4, weak.width - 8, weak.height - 8, p.sky);
+      pxRect(weak.x + 5, weak.y + 5, 5, 5, p.hot);
+      pxRect(weak.x + 14, weak.y + 7, 4, 12, p.hot);
+      pxRect(weak.x + 10, weak.y + 12, 12, 4, p.hot);
+      continue;
+    }
+
+    if (open) {
+      const blink = isBossWeakPointBlinkOn();
+      const outer = blink ? p.hazard : p.hot;
+      const inner = blink ? p.hot : p.hazard;
+      pxRect(weak.x - 6, weak.y - 6, weak.width + 12, weak.height + 12, p.dark);
+      pxRect(weak.x - 3, weak.y - 3, weak.width + 6, weak.height + 6, outer);
+      pxRect(weak.x + 3, weak.y + 3, weak.width - 6, weak.height - 6, inner);
+      pxRect(weak.x + 10, weak.y + 7, weak.width - 20, weak.height - 14, p.sky);
     }
   }
 }
@@ -766,9 +791,17 @@ function drawBossStatus(p) {
   ctx.font = 'bold 18px monospace';
   ctx.textBaseline = 'top';
   ctx.fillText(`BOSS NUCLEI ${state.boss.defeatedWeakPoints}/3`, 20, 64);
-  if (state.boss.phase === 'vulnerable') {
+
+  if (isBossFireVisible()) {
     ctx.fillStyle = p.hazard;
-    ctx.fillText('NUCLEO ESPOSTO!', 20, 88);
+    ctx.font = 'bold 42px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('FIRE!', CONFIG.width / 2, 72);
+    ctx.textAlign = 'left';
+
+    ctx.fillStyle = p.dark;
+    ctx.font = 'bold 16px monospace';
+    ctx.fillText('COLPISCI LA FINESTRA LAMPEGGIANTE', 300, 120);
   }
 }
 
