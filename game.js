@@ -59,7 +59,7 @@ const state = {
   score: 0,
   best: Number(localStorage.getItem('lab8.best') || 0),
   elapsed: 0,
-  speedIndex: CONFIG.initialSpeedIndex,
+  speedIndex: globalThis.Lab8Settings?.initialSpeedIndex?.() ?? CONFIG.initialSpeedIndex,
   spawnDistance: 330,
   worldDistance: 0,
   tubes: [],
@@ -123,7 +123,7 @@ function resetGame() {
   state.running = true;
   state.score = 0;
   state.elapsed = 0;
-  state.speedIndex = CONFIG.initialSpeedIndex;
+  state.speedIndex = globalThis.Lab8Settings?.initialSpeedIndex?.() ?? CONFIG.initialSpeedIndex;
   state.spawnDistance = 330;
   state.worldDistance = 0;
   state.tubes.length = 0;
@@ -344,6 +344,8 @@ function gameOver() {
   state.running = false;
   state.best = Math.max(state.best, Math.floor(state.score));
   localStorage.setItem('lab8.best', String(state.best));
+  const finalScore = Math.floor(state.score);
+  globalThis.Lab8Leaderboard?.recordScore?.(finalScore, `${Date.now()}-${finalScore}`);
   state.flash = 0.25;
 }
 
@@ -516,6 +518,7 @@ function isBossWeakPointBlinkOn() {
 }
 
 function update(dt) {
+  if (globalThis.Lab8Pin?.blocksGameplay?.() || globalThis.Lab8Settings?.blocksGameplay?.() || globalThis.Lab8Leaderboard?.blocksGameplay?.()) return;
   state.flash = Math.max(0, state.flash - dt);
   guido.shootTimer = Math.max(0, guido.shootTimer - dt);
 
@@ -919,3 +922,9 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+globalThis.Lab8Game = {
+  applyInitialSpeed(index) {
+    if (state.mode === MODES.RUNNER && state.score === 0) state.speedIndex = Math.max(0, Math.min(2, Number(index)));
+  },
+};
