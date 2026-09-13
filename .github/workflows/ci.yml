@@ -22,20 +22,25 @@ jobs:
         run: |
           node --check game.js
           node --check sw.js
+          node --check test-game.mjs
+
+      - name: Run gameplay tests
+        run: node test-game.mjs
 
       - name: Validate manifest JSON
         run: node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8')); console.log('manifest.webmanifest OK')"
 
       - name: Verify vertical slice version
         run: |
-          grep -q 'VERTICAL SLICE 0.3' index.html
-          grep -q "lab8-v0.3" sw.js
+          grep -q 'VERTICAL SLICE 0.4' index.html
+          grep -q "lab8-v0.4" sw.js
 
       - name: Verify required app shell files
         run: |
           test -f index.html
           test -f styles.css
           test -f game.js
+          test -f test-game.mjs
           test -f sw.js
           test -f manifest.webmanifest
           test -f icons/icon-192.png
