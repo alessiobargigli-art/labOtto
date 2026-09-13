@@ -8,6 +8,9 @@
   const toast = document.querySelector('#leaderboardToast');
   if (!overlay) return;
 
+  // Keep full-screen UI outside the canvas stacking/touch context.
+  if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
+
   let open = false;
   let submittedGameToken = null;
 
