@@ -35,9 +35,6 @@
     });
   }
 
-  overlay.addEventListener('pointerdown', (event) => event.stopPropagation(), true);
-  overlay.addEventListener('pointerup', (event) => event.stopPropagation(), true);
-
   function playerName() { return (localStorage.getItem(NAME_KEY) || 'GUIDO').trim().slice(0, 20) || 'GUIDO'; }
   function initialSpeedIndex() {
     const raw = localStorage.getItem(SPEED_KEY);
