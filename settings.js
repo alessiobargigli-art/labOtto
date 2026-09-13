@@ -12,11 +12,31 @@
   const speedButtons = [...document.querySelectorAll('[data-start-speed]')];
   if (!overlay) return;
 
-  // Keep full-screen UI outside the canvas stacking/touch context.
   if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
 
   let open = false;
   let selectedSpeed = 1;
+
+  function bindPress(element, handler) {
+    if (!element) return;
+    let pointerHandledAt = 0;
+    element.addEventListener('pointerup', (event) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      pointerHandledAt = performance.now();
+      event.preventDefault();
+      event.stopPropagation();
+      handler(event);
+    });
+    element.addEventListener('click', (event) => {
+      if (performance.now() - pointerHandledAt < 500) return;
+      event.preventDefault();
+      event.stopPropagation();
+      handler(event);
+    });
+  }
+
+  overlay.addEventListener('pointerdown', (event) => event.stopPropagation(), true);
+  overlay.addEventListener('pointerup', (event) => event.stopPropagation(), true);
 
   function playerName() { return (localStorage.getItem(NAME_KEY) || 'GUIDO').trim().slice(0, 20) || 'GUIDO'; }
   function initialSpeedIndex() {
@@ -38,11 +58,17 @@
     open = true;
     selectedSpeed = initialSpeedIndex();
     nameInput.value = playerName();
-    refreshSpeed(); refreshPin();
+    refreshSpeed();
+    refreshPin();
     overlay.hidden = false;
-    nameInput.focus(); nameInput.select();
+    overlay.scrollTop = 0;
+    requestAnimationFrame(() => nameInput.focus({ preventScroll: true }));
   }
-  function hide() { open = false; overlay.hidden = true; document.querySelector('#game')?.focus(); }
+  function hide() {
+    open = false;
+    overlay.hidden = true;
+    document.querySelector('#game')?.focus();
+  }
   function save() {
     const name = nameInput.value.trim().slice(0, 20) || 'GUIDO';
     localStorage.setItem(NAME_KEY, name);
@@ -55,11 +81,25 @@
     globalThis.Lab8Pin?.openSettings?.();
   }
 
-  speedButtons.forEach((button) => button.addEventListener('click', () => { selectedSpeed = Number(button.dataset.startSpeed); refreshSpeed(); }));
-  openButton?.addEventListener('click', show);
-  closeButton?.addEventListener('click', hide);
-  saveButton?.addEventListener('click', save);
-  pinAction?.addEventListener('click', managePin);
+  speedButtons.forEach((button) => bindPress(button, () => {
+    selectedSpeed = Number(button.dataset.startSpeed);
+    refreshSpeed();
+  }));
+  bindPress(openButton, show);
+  bindPress(closeButton, hide);
+  bindPress(saveButton, save);
+  bindPress(pinAction, managePin);
 
-  globalThis.Lab8Settings = { blocksGameplay: () => open, playerName, initialSpeedIndex, open: show, close: hide, _test: { save, setSpeed: (v) => { selectedSpeed = v; }, get selectedSpeed(){ return selectedSpeed; } } };
+  globalThis.Lab8Settings = {
+    blocksGameplay: () => open,
+    playerName,
+    initialSpeedIndex,
+    open: show,
+    close: hide,
+    _test: {
+      save,
+      setSpeed: (v) => { selectedSpeed = v; },
+      get selectedSpeed() { return selectedSpeed; }
+    }
+  };
 })();
