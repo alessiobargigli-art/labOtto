@@ -12,6 +12,9 @@
   const speedButtons = [...document.querySelectorAll('[data-start-speed]')];
   if (!overlay) return;
 
+  // Keep full-screen UI outside the canvas stacking/touch context.
+  if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
+
   let open = false;
   let selectedSpeed = 1;
 
