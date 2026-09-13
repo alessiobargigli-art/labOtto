@@ -22,29 +22,38 @@ jobs:
         run: |
           node --check game.js
           node --check audio.js
+          node --check pin.js
+          node --check settings.js
+          node --check leaderboard.js
+          node --check leaderboard-store.mjs
+          node --check server.mjs
           node --check sw.js
           node --check test-game.mjs
+          node --check test-pin.mjs
+          node --check test-settings.mjs
+          node --check test-leaderboard.mjs
+          node --check test-leaderboard-ui.mjs
+          node --check test-server.mjs
 
-      - name: Run gameplay tests
-        run: node test-game.mjs
+      - name: Run tests
+        env:
+          NODE_NO_WARNINGS: '1'
+        run: |
+          node test-pin.mjs
+          node test-settings.mjs
+          node test-leaderboard.mjs
+          node test-leaderboard-ui.mjs
+          node test-server.mjs
+          node test-game.mjs
 
       - name: Validate manifest JSON
         run: node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8')); console.log('manifest.webmanifest OK')"
 
-      - name: Verify vertical slice version
+      - name: Verify 1.0 version and cache
         run: |
-          grep -q 'VERTICAL SLICE 0.4' index.html
-          grep -q "lab8-v0.4" sw.js
+          grep -q 'VERSIONE 1.0' index.html
+          grep -q "lab8-v1.0" sw.js
 
-      - name: Verify required app shell files
+      - name: Verify required files
         run: |
-          test -f index.html
-          test -f styles.css
-          test -f game.js
-          test -f audio.js
-          test -f test-game.mjs
-          test -f sw.js
-          test -f manifest.webmanifest
-          test -f icons/icon-192.png
-          test -f icons/icon-512.png
-          test -f icons/apple-touch-icon.png
+          for file in index.html styles.css game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs sw.js manifest.webmanifest icons/icon-192.png icons/icon-512.png icons/apple-touch-icon.png; do test -f "$file"; done
