@@ -1,0 +1,5 @@
+# LAB-8 runtime data
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
