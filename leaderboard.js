@@ -8,11 +8,31 @@
   const toast = document.querySelector('#leaderboardToast');
   if (!overlay) return;
 
-  // Keep full-screen UI outside the canvas stacking/touch context.
   if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
 
   let open = false;
   let submittedGameToken = null;
+
+  function bindPress(element, handler) {
+    if (!element) return;
+    let pointerHandledAt = 0;
+    element.addEventListener('pointerup', (event) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      pointerHandledAt = performance.now();
+      event.preventDefault();
+      event.stopPropagation();
+      handler(event);
+    });
+    element.addEventListener('click', (event) => {
+      if (performance.now() - pointerHandledAt < 500) return;
+      event.preventDefault();
+      event.stopPropagation();
+      handler(event);
+    });
+  }
+
+  overlay.addEventListener('pointerdown', (event) => event.stopPropagation(), true);
+  overlay.addEventListener('pointerup', (event) => event.stopPropagation(), true);
 
   function blocksGameplay() { return open; }
   function formatDate(value) {
@@ -46,11 +66,22 @@
       return null;
     }
   }
-  async function show() { open = true; overlay.hidden = false; await load(); }
-  function hide() { open = false; overlay.hidden = true; document.querySelector('#game')?.focus(); }
+  async function show() {
+    open = true;
+    overlay.hidden = false;
+    overlay.scrollTop = 0;
+    await load();
+  }
+  function hide() {
+    open = false;
+    overlay.hidden = true;
+    document.querySelector('#game')?.focus();
+  }
   function showToast(text) {
-    toast.textContent = text; toast.hidden = false;
-    clearTimeout(showToast.timer); showToast.timer = setTimeout(() => { toast.hidden = true; }, 4200);
+    toast.textContent = text;
+    toast.hidden = false;
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => { toast.hidden = true; }, 4200);
   }
   async function recordScore(score, token) {
     if (token != null && token === submittedGameToken) return null;
@@ -58,7 +89,8 @@
     const name = globalThis.Lab8Settings?.playerName?.() || 'GUIDO';
     try {
       const response = await fetch('./api/leaderboard', {
-        method: 'POST', headers: { 'content-type': 'application/json' },
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ name, score: Math.max(0, Math.floor(score)) })
       });
       if (!response.ok) throw new Error('service unavailable');
@@ -70,7 +102,7 @@
     }
   }
 
-  openButton?.addEventListener('click', show);
-  closeButton?.addEventListener('click', hide);
+  bindPress(openButton, show);
+  bindPress(closeButton, hide);
   globalThis.Lab8Leaderboard = { blocksGameplay, show, close: hide, load, recordScore, _test: { renderRows } };
 })();
