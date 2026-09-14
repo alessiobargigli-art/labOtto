@@ -27,7 +27,19 @@
     return true;
   }
 
+  function trySpawnCluster() {
+    const patterns = globalThis.Lab8SpawnPatterns;
+    if (!patterns?._test?.makeCluster || state.hazards.length !== 0) return false;
+    if (Math.random() >= patterns.clusterChance) return false;
+    const cluster = patterns._test.makeCluster();
+    if (!cluster?.length) return false;
+    state.hazards.push(...cluster);
+    return true;
+  }
+
   function spawnOne() {
+    if (trySpawnCluster()) return true;
+
     const lvl = level();
     const hazard = game.makeHazard();
     const worldSpeed = Math.abs(hazard.vx || 1);
