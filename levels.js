@@ -1,0 +1,72 @@
+(() => {
+  'use strict';
+
+  const levels = [
+    {
+      id: 'lab',
+      order: 1,
+      name: 'LABORATORIO',
+      subtitle: 'LAB-8 // SETTORE SCIENTIFICO',
+      bossType: 'palace',
+      bossAfterScore: 2200,
+      physics: { gravity: 1850, jumpVelocity: -690 },
+      speedMultiplier: 1,
+      hazardSpeed: [0.92, 1.08],
+      hazardGap: [285, 500],
+      palette: { sky:'#d8f3dc', dark:'#16324f', mid:'#2d6a4f', hot:'#f4a261', hazard:'#ffd60a' },
+      nightPalette: { sky:'#10233c', dark:'#f1fa8c', mid:'#ffb703', hot:'#ff4d6d', hazard:'#ffd60a' },
+      hazards: ['tube','crate','fridge','flyer'],
+    },
+    {
+      id: 'home',
+      order: 2,
+      name: 'CASA',
+      subtitle: 'CASA // ELETTRODOMESTICI OSTILI',
+      bossType: 'alien',
+      bossAfterScore: 2600,
+      physics: { gravity: 2150, jumpVelocity: -660 },
+      speedMultiplier: 1.04,
+      hazardSpeed: [0.95, 1.12],
+      hazardGap: [300, 520],
+      palette: { sky:'#f7e7ce', dark:'#4b2e2b', mid:'#a06b3b', hot:'#e76f51', hazard:'#f4d35e' },
+      nightPalette: { sky:'#1d1a24', dark:'#f2cc8f', mid:'#81b29a', hot:'#e07a5f', hazard:'#f4d35e' },
+      hazards: ['toast','chair','vacuum','lamp'],
+    },
+    {
+      id: 'underwater',
+      order: 3,
+      name: 'SOTT\'ACQUA',
+      subtitle: 'ABISSO // PRESSIONE CRITICA',
+      bossType: 'palace',
+      bossAfterScore: 3000,
+      physics: { gravity: 980, jumpVelocity: -520 },
+      speedMultiplier: 0.92,
+      hazardSpeed: [0.72, 0.98],
+      hazardGap: [320, 560],
+      palette: { sky:'#8ecae6', dark:'#023047', mid:'#219ebc', hot:'#ffb703', hazard:'#fb8500' },
+      nightPalette: { sky:'#001219', dark:'#94d2bd', mid:'#0a9396', hot:'#ee9b00', hazard:'#ca6702' },
+      hazards: ['jelly','mine','puffer','torpedo'],
+    },
+    {
+      id: 'mars',
+      order: 4,
+      name: 'MARTE',
+      subtitle: 'MARTE // ULTIMA FRONTIERA',
+      bossType: 'alien',
+      bossAfterScore: 3400,
+      physics: { gravity: 760, jumpVelocity: -560 },
+      speedMultiplier: 1.08,
+      hazardSpeed: [0.86, 1.18],
+      hazardGap: [330, 590],
+      palette: { sky:'#e59866', dark:'#5b2333', mid:'#a44a3f', hot:'#ff6b35', hazard:'#ffd166' },
+      nightPalette: { sky:'#1c1025', dark:'#f4a261', mid:'#9b5de5', hot:'#f15bb5', hazard:'#fee440' },
+      hazards: ['rock','rover','meteor','ufo'],
+    },
+  ];
+
+  globalThis.Lab8Levels = Object.freeze({
+    all: Object.freeze(levels),
+    get(index) { return levels[Math.max(0, Math.min(levels.length - 1, index))]; },
+    count: levels.length,
+  });
+})();

@@ -24,7 +24,7 @@
         <p>Guido contro le provette del laboratorio orbitale.</p>
       </div>
       <div class="title-actions">
-        <div class="badge">VERSIONE 1.1.1</div>
+        <div class="badge">VERSIONE 2.0 DEV</div>
         <button id="forceRefresh" class="refresh-button" type="button" aria-label="Aggiorna LAB-8 all'ultima versione">↻ AGGIORNA</button>
         <button id="leaderboardButton" class="settings-button" type="button" aria-label="Classifica globale">★ TOP 15</button>
         <button id="settingsButton" class="settings-button" type="button" aria-label="Impostazioni gioco">⚙ SETUP</button>
@@ -77,25 +77,12 @@
 
       <div id="touchControls" class="touch-controls" aria-label="Controlli touch">
         <div class="touch-group touch-group--left" aria-label="Controlli azione">
-          <button class="pixel-button pixel-button--jump" data-action="jump" aria-label="Salta">
-            <span class="pixel-button__icon" aria-hidden="true">↑</span>
-            <span class="pixel-button__label">SALTO</span>
-          </button>
-          <button class="pixel-button pixel-button--shoot" data-action="shoot" aria-label="Spara">
-            <span class="pixel-button__icon" aria-hidden="true">●</span>
-            <span class="pixel-button__label">SPARO</span>
-          </button>
+          <button class="pixel-button pixel-button--jump" data-action="jump" aria-label="Salta"><span class="pixel-button__icon" aria-hidden="true">↑</span><span class="pixel-button__label">SALTO</span></button>
+          <button class="pixel-button pixel-button--shoot" data-action="shoot" aria-label="Spara"><span class="pixel-button__icon" aria-hidden="true">●</span><span class="pixel-button__label">SPARO</span></button>
         </div>
-
         <div class="touch-group touch-group--right" aria-label="Controlli marcia">
-          <button class="pixel-button pixel-button--gear" data-action="slower" aria-label="Diminuisci marcia">
-            <span class="pixel-button__icon" aria-hidden="true">−</span>
-            <span class="pixel-button__label">MARCIA</span>
-          </button>
-          <button class="pixel-button pixel-button--gear" data-action="faster" aria-label="Aumenta marcia">
-            <span class="pixel-button__icon" aria-hidden="true">+</span>
-            <span class="pixel-button__label">MARCIA</span>
-          </button>
+          <button class="pixel-button pixel-button--gear" data-action="slower" aria-label="Diminuisci marcia"><span class="pixel-button__icon" aria-hidden="true">−</span><span class="pixel-button__label">MARCIA</span></button>
+          <button class="pixel-button pixel-button--gear" data-action="faster" aria-label="Aumenta marcia"><span class="pixel-button__icon" aria-hidden="true">+</span><span class="pixel-button__label">MARCIA</span></button>
         </div>
       </div>
     </section>
@@ -134,6 +121,9 @@
   <script src="pin.js"></script>
   <script src="settings.js"></script>
   <script src="leaderboard.js"></script>
+  <script src="levels.js"></script>
+  <script src="campaign-core.js"></script>
+  <script src="campaign-game.js"></script>
   <script src="game.js"></script>
   <script src="audio.js"></script>
 </body>

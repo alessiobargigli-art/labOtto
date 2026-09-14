@@ -20,6 +20,9 @@ jobs:
 
       - name: Check JavaScript syntax
         run: |
+          node --check levels.js
+          node --check campaign-core.js
+          node --check campaign-game.js
           node --check game.js
           node --check audio.js
           node --check pin.js
@@ -28,6 +31,7 @@ jobs:
           node --check leaderboard-store.mjs
           node --check server.mjs
           node --check sw.js
+          node --check test-campaign.mjs
           node --check test-game.mjs
           node --check test-pin.mjs
           node --check test-settings.mjs
@@ -44,16 +48,17 @@ jobs:
           node test-leaderboard.mjs
           node test-leaderboard-ui.mjs
           node test-server.mjs
+          node test-campaign.mjs
           node test-game.mjs
 
       - name: Validate manifest JSON
         run: node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8')); console.log('manifest.webmanifest OK')"
 
-      - name: Verify 1.0 version and cache
+      - name: Verify development version and cache
         run: |
-          grep -q 'VERSIONE 1.0' index.html
-          grep -q "lab8-v1.0" sw.js
+          grep -q 'VERSIONE 2.0 DEV' index.html
+          grep -q "lab8-v2.0-dev" sw.js
 
       - name: Verify required files
         run: |
-          for file in index.html styles.css game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs sw.js manifest.webmanifest icons/icon-192.png icons/icon-512.png icons/apple-touch-icon.png; do test -f "$file"; done
+          for file in index.html styles.css panels.css levels.js campaign-core.js campaign-game.js game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs test-campaign.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs sw.js manifest.webmanifest icons/icon-192.png icons/icon-512.png icons/apple-touch-icon.png; do test -f "$file"; done
