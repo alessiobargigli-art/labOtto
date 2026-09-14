@@ -24,6 +24,8 @@ jobs:
           node --check campaign-core.js
           node --check campaign-game.js
           node --check game-v2.js
+          node --check spawn-patterns.js
+          node --check spawn-tuning.js
           node --check game.js
           node --check audio.js
           node --check pin.js
@@ -59,10 +61,12 @@ jobs:
 
       - name: Verify released version and cache
         run: |
-          grep -q 'VERSIONE 2.0.0' index.html
-          grep -q "lab8-v2.0.0" sw.js
+          grep -q 'VERSIONE 2.0.2' index.html
+          grep -q "lab8-v2.0.2" sw.js
           grep -q 'game-v2.js' index.html
+          grep -q 'spawn-patterns.js' index.html
+          grep -q 'spawn-tuning.js' index.html
 
       - name: Verify required files
         run: |
-          for file in index.html styles.css panels.css levels.js campaign-core.js campaign-game.js game-v2.js game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs test-campaign.mjs test-runtime-v2.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs sw.js manifest.webmanifest icons/icon-192.png icons/icon-512.png icons/apple-touch-icon.png; do test -f "$file"; done
+          for file in index.html styles.css panels.css levels.js campaign-core.js campaign-game.js game-v2.js spawn-patterns.js spawn-tuning.js game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs test-campaign.mjs test-runtime-v2.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs sw.js manifest.webmanifest icons/icon-192.png icons/icon-512.png icons/apple-touch-icon.png; do test -f "$file"; done
