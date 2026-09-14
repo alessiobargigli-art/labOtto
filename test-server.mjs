@@ -23,8 +23,10 @@ try {
   const page = await fetch(`${base}/`);
   assert.equal(page.status, 200);
   const html = await page.text();
-  assert.match(html, /VERSIONE 2\.0\.0/);
+  assert.match(html, /VERSIONE 2\.0\.2/);
   assert.match(html, /game-v2\.js/);
+  assert.match(html, /spawn-patterns\.js/);
+  assert.match(html, /spawn-tuning\.js/);
 
   const insert = await fetch(`${base}/api/leaderboard`, { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({name:'TESTER',score:777}) });
   assert.equal(insert.status, 201);
