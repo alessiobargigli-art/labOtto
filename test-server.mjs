@@ -23,8 +23,9 @@ try {
   const page = await fetch(`${base}/`);
   assert.equal(page.status, 200);
   const html = await page.text();
-  assert.match(html, /VERSIONE 2\.0\.3/);
+  assert.match(html, /VERSIONE 2\.0\.4/);
   assert.match(html, /game-v2\.js/);
+  assert.match(html, /world-rules\.js/);
   assert.match(html, /spawn-patterns\.js/);
   assert.match(html, /spawn-tuning\.js/);
   assert.match(html, /bomb-enemy\.js/);
