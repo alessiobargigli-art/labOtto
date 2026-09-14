@@ -22,7 +22,9 @@ try {
   const base = `http://127.0.0.1:${port}`;
   const page = await fetch(`${base}/`);
   assert.equal(page.status, 200);
-  assert.match(await page.text(), /VERSIONE 1\.0/);
+  const html = await page.text();
+  assert.match(html, /VERSIONE 2\.0\.0/);
+  assert.match(html, /game-v2\.js/);
 
   const insert = await fetch(`${base}/api/leaderboard`, { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({name:'TESTER',score:777}) });
   assert.equal(insert.status, 201);
