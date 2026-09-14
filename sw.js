@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lab8-v2.0-dev';
+const CACHE_NAME = 'lab8-v2.0.0';
 const APP_SHELL = [
   './',
   './index.html',
@@ -6,8 +6,7 @@ const APP_SHELL = [
   './panels.css',
   './levels.js',
   './campaign-core.js',
-  './campaign-game.js',
-  './game.js',
+  './game-v2.js',
   './audio.js',
   './pin.js',
   './settings.js',
