@@ -35,7 +35,6 @@
   let last = performance.now();
 
   for (const lvl of globalThis.Lab8Levels?.all ?? []) {
-    // The refrigerator is the boss gateway; score alone must never start a boss.
     lvl.bossAfterScore = Number.POSITIVE_INFINITY;
   }
 
@@ -44,7 +43,7 @@
   }
 
   function isFridge(h) { return h?.type === 'fridge'; }
-  function isSpecial(h) { return isFridge(h) || h?.type === 'bomb' || h?.type?.startsWith('boss-'); }
+  function isSpecialNonFridge(h) { return h?.type === 'bomb' || h?.type?.startsWith('boss-'); }
 
   function applyDescriptor(h, descriptor) {
     h.type = descriptor.type;
@@ -67,17 +66,18 @@
     const id = level().id;
     const catalog = CATALOGS[id] ?? CATALOGS.lab;
     for (const h of state.hazards) {
-      if (h.worldStyled || isSpecial(h)) continue;
+      if (h.worldStyled || isSpecialNonFridge(h)) continue;
 
-      // Legacy runtime occasionally creates a refrigerator in the laboratory.
-      // Keep only a small fraction so it stays a rare gateway.
-      if (h.type === 'fridge') {
+      if (isFridge(h)) {
         if (Math.random() < 0.25) {
           h.destructible = false;
           h.counter = 'boss-gateway';
           h.worldStyled = true;
+          h.bossGateway = true;
           continue;
         }
+        applyDescriptor(h, catalog[Math.floor(Math.random() * catalog.length)]);
+        continue;
       }
 
       applyDescriptor(h, catalog[Math.floor(Math.random() * catalog.length)]);
