@@ -24,7 +24,7 @@
         <p>Guido attraverso quattro mondi ostili.</p>
       </div>
       <div class="title-actions">
-        <div class="badge">VERSIONE 2.0.2</div>
+        <div class="badge">VERSIONE 2.0.3</div>
         <button id="forceRefresh" class="refresh-button" type="button" aria-label="Aggiorna LAB-8 all'ultima versione">↻ AGGIORNA</button>
         <button id="leaderboardButton" class="settings-button" type="button" aria-label="Classifica globale">★ TOP 15</button>
         <button id="settingsButton" class="settings-button" type="button" aria-label="Impostazioni gioco">⚙ SETUP</button>
@@ -79,6 +79,7 @@
         <div class="touch-group touch-group--left" aria-label="Controlli azione">
           <button class="pixel-button pixel-button--jump" data-action="jump" aria-label="Salta"><span class="pixel-button__icon" aria-hidden="true">↑</span><span class="pixel-button__label">SALTO</span></button>
           <button class="pixel-button pixel-button--shoot" data-action="shoot" aria-label="Spara"><span class="pixel-button__icon" aria-hidden="true">●</span><span class="pixel-button__label">SPARO</span></button>
+          <button class="pixel-button pixel-button--shoot" data-action="inhale" aria-label="Aspira bomba"><span class="pixel-button__icon" aria-hidden="true">◀</span><span class="pixel-button__label">ASPIRA</span></button>
         </div>
         <div class="touch-group touch-group--right" aria-label="Controlli marcia">
           <button class="pixel-button pixel-button--gear" data-action="slower" aria-label="Diminuisci marcia"><span class="pixel-button__icon" aria-hidden="true">−</span><span class="pixel-button__label">MARCIA</span></button>
@@ -91,6 +92,7 @@
       <strong>CONTROLLI</strong>
       <span>Salta: <kbd>Spazio</kbd> / <kbd>↑</kbd> / <kbd>W</kbd></span>
       <span>Spara: <kbd>X</kbd> / <kbd>F</kbd></span>
+      <span>Aspira: <kbd>C</kbd></span>
       <span>Marcia: <kbd>−</kbd> / <kbd>+</kbd></span>
       <span>Restart: <kbd>R</kbd> / <kbd>Invio</kbd></span>
     </section>
@@ -126,6 +128,7 @@
   <script src="game-v2.js"></script>
   <script src="spawn-patterns.js"></script>
   <script src="spawn-tuning.js"></script>
+  <script src="bomb-enemy.js"></script>
   <script src="audio.js"></script>
 </body>
 </html>
