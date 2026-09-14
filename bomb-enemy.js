@@ -22,6 +22,22 @@
 
   const beam = document.createElement('div');
   beam.className = 'inhale-beam';
+  Object.assign(beam.style, {
+    position: 'absolute',
+    left: '16.5%',
+    top: '58%',
+    width: '26%',
+    height: '20%',
+    transformOrigin: 'left center',
+    clipPath: 'polygon(0 42%, 100% 0, 100% 100%, 0 58%)',
+    background: 'repeating-linear-gradient(90deg, rgba(230,255,207,.72) 0 8px, rgba(246,200,95,.34) 8px 16px)',
+    borderRight: '4px solid rgba(246,200,95,.9)',
+    filter: 'drop-shadow(0 0 8px rgba(230,255,207,.75))',
+    opacity: '0',
+    pointerEvents: 'none',
+    zIndex: '4',
+    transition: 'opacity .08s linear, transform .16s ease-out',
+  });
   beam.hidden = true;
   canvasWrap?.appendChild(beam);
 
@@ -83,13 +99,13 @@
   function showInhaleBeam() {
     if (!beam) return;
     beam.hidden = false;
-    beam.classList.remove('is-active');
-    void beam.offsetWidth;
-    beam.classList.add('is-active');
+    beam.style.opacity = '0.9';
+    beam.style.transform = 'scaleX(1.08)';
     setTimeout(() => {
-      beam.classList.remove('is-active');
-      beam.hidden = true;
-    }, 380);
+      beam.style.opacity = '0';
+      beam.style.transform = 'scaleX(.8)';
+      setTimeout(() => { beam.hidden = true; }, 90);
+    }, 280);
   }
 
   function blastAfterIngestion() {
