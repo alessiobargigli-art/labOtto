@@ -83,13 +83,13 @@ function updatePhysics(dt){
 }
 
 const HAZARD_VISUALS = {
-  lab:['tube','crate','flyer'], home:['toast','chair','vacuum','lamp'], underwater:['jelly','mine','puffer','torpedo'], mars:['rock','rover','meteor','ufo']
+  lab:['tube','crate','fridge','flyer'], home:['toast','chair','vacuum','lamp'], underwater:['jelly','mine','puffer','torpedo'], mars:['rock','rover','meteor','ufo']
 };
 function makeHazard(){
   const lvl=level(); const types=HAZARD_VISUALS[lvl.id]||lvl.hazards; const type=types[Math.floor(Math.random()*types.length)];
   const flying=['flyer','lamp','jelly','torpedo','meteor','ufo'].includes(type);
   const destructible=['tube','toast','lamp','jelly','puffer','meteor'].includes(type);
-  const tall=['chair','rover'].includes(type);
+  const tall=['fridge','chair','rover'].includes(type);
   const width=flying?44:(tall?42:36), height=flying?24:(tall?62:36);
   const low=flying && Math.random()<.6;
   const y=flying ? (low?GROUND_Y-58:GROUND_Y-130) : GROUND_Y-height;
@@ -119,7 +119,8 @@ function enterBossStage(){
   state.boss={type:level().bossType,phase:'attack',timer:3.0,attackTimer:.7,hp:3,weakOpen:false,hitFlash:0,victoryTimer:0};
   state.transition=.8; play('boss-enter');
 }
-function bossTarget(){ return state.boss.type==='alien' ? {x:W-180,y:110,width:56,height:70} : {x:W-190,y:170,width:36,height:84}; }
+function alienBossOffset(){ return state.boss?.type==='alien' ? Math.sin(state.elapsed*3.2)*45 : 0; }
+function bossTarget(){ return state.boss.type==='alien' ? {x:W-180,y:145+alienBossOffset(),width:56,height:70} : {x:W-190,y:170,width:36,height:84}; }
 function spawnBossAttack(){
   const destructible=Math.random()<.58; const high=Math.random()<.25; const size=destructible?26:34;
   const speed=rand(level().hazardSpeed[0],level().hazardSpeed[1]);
@@ -154,7 +155,7 @@ function updateBoss(dt){
   for(let bi=state.bullets.length-1;bi>=0;bi--){ const bullet=state.bullets[bi]; let used=false;
     for(let hi=state.hazards.length-1;hi>=0;hi--){ const h=state.hazards[hi]; if(!overlap(bullet,h,1))continue; if(h.destructible){emit(h.x,h.y,palette().hot);state.hazards.splice(hi,1);state.bullets.splice(bi,1);state.score+=80;play('destroy');}else{bullet.reflected=true;bullet.vx=-BULLET_SPEED*.6;bullet.x=h.x-bullet.width-2;play('ricochet');} used=true;break; }
     if(used)continue;
-    if(b.phase==='vulnerable'&&b.weakOpen&&overlap(bullet,bossTarget(),0)){state.bullets.splice(bi,1);b.hp--;b.hitFlash=.35;b.weakOpen=false;state.score+=350;emit(W-150,150,palette().hazard,16);play('weak-hit');if(b.hp<=0)finishBoss();else{b.phase='attack';b.timer=2.6;b.attackTimer=.8;}}
+    if(b.phase==='vulnerable'&&b.weakOpen&&overlap(bullet,bossTarget(),0)){state.bullets.splice(bi,1);b.hp--;b.hitFlash=.35;b.weakOpen=false;state.score+=350;emit(W-150,bossTarget().y+35,palette().hazard,16);play('weak-hit');if(b.hp<=0)finishBoss();else{b.phase='attack';b.timer=2.6;b.attackTimer=.8;}}
   }
   const hit={x:guido.x+5,y:guido.y+4,width:guido.width-10,height:guido.height-5}; for(const h of state.hazards) if(overlap(hit,h,2)){loseLife();break;}
 }
@@ -202,7 +203,7 @@ function drawHazard(h,p){const x=h.x,y=h.y+Math.sin(h.phase||0)*1.5;if(h.destruc
 function drawPickup(pick,p){const y=pick.y+Math.sin(pick.phase)*5;rect(pick.x,y,pick.width,pick.height,p.hazard);rect(pick.x+5,y+5,14,14,p.hot);rect(pick.x+9,y+2,6,20,p.sky);rect(pick.x+2,y+9,20,6,p.sky);}
 function drawBoss(p){
   if(state.boss.type==='alien'){
-    const x=W-245,y=65;rect(x+60,y,100,38,p.mid);rect(x+35,y+35,150,110,p.dark);rect(x+55,y+55,110,75,p.mid);rect(x+72,y+70,20,14,p.hazard);rect(x+128,y+70,20,14,p.hazard);rect(x+88,y+108,45,10,p.hot);rect(x+10,y+90,40,20,p.dark);rect(x+185,y+90,40,20,p.dark);
+    const x=W-245,y=100+alienBossOffset();rect(x+60,y,100,38,p.mid);rect(x+35,y+35,150,110,p.dark);rect(x+55,y+55,110,75,p.mid);rect(x+72,y+70,20,14,p.hazard);rect(x+128,y+70,20,14,p.hazard);rect(x+88,y+108,45,10,p.hot);rect(x+10,y+90,40,20,p.dark);rect(x+185,y+90,40,20,p.dark);
   }else{const x=W-290,y=45;rect(x,y+65,250,GROUND_Y-y-65,p.dark);rect(x+25,y+35,200,30,p.mid);for(let r=0;r<4;r++)for(let c=0;c<3;c++)rect(x+35+c*65,y+95+r*42,24,20,p.mid);}
   if(state.boss.phase==='vulnerable'&&state.boss.weakOpen){const t=bossTarget();rect(t.x-6,t.y-6,t.width+12,t.height+12,p.hazard);rect(t.x,t.y,t.width,t.height,p.hot);}
 }
