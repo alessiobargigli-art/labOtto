@@ -6,6 +6,7 @@
 
   const state = game.state;
   const guido = game.guido;
+  const canvasWrap = document.querySelector('.canvas-wrap');
   const INHALE_RANGE = 250;
   const BOMB_SIZE = 30;
   const FLOOR_Y = 302;
@@ -13,9 +14,16 @@
   const BOUNCE_VY = -510;
   const MIN_SPAWN_SECONDS = 5.5;
   const MAX_SPAWN_SECONDS = 8.5;
+  const INGEST_DELAY_MS = 320;
 
   let spawnTimer = randomSpawnDelay();
   let last = performance.now();
+  let ingesting = false;
+
+  const beam = document.createElement('div');
+  beam.className = 'inhale-beam';
+  beam.hidden = true;
+  canvasWrap?.appendChild(beam);
 
   function randomSpawnDelay() {
     return MIN_SPAWN_SECONDS + Math.random() * (MAX_SPAWN_SECONDS - MIN_SPAWN_SECONDS);
@@ -49,19 +57,66 @@
       phase: 0,
       low: true,
       bomb: true,
+      worldStyled: true,
     });
   }
 
-  function implodeBomb(bomb) {
+  function playInhaleSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(180, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(520, ctx.currentTime + 0.22);
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.26);
+      osc.onended = () => ctx.close().catch(() => {});
+    } catch {}
+  }
+
+  function showInhaleBeam() {
+    if (!beam) return;
+    beam.hidden = false;
+    beam.classList.remove('is-active');
+    void beam.offsetWidth;
+    beam.classList.add('is-active');
+    setTimeout(() => {
+      beam.classList.remove('is-active');
+      beam.hidden = true;
+    }, 380);
+  }
+
+  function blastAfterIngestion() {
+    const cleared = state.hazards.length;
+    state.hazards.length = 0;
+    state.bullets.length = 0;
+    state.score += 125 + cleared * 35;
+    state.flash = Math.max(state.flash, 0.65);
+    try { globalThis.Lab8Audio?.play?.('destroy'); } catch {}
+    setTimeout(() => { ingesting = false; }, 120);
+  }
+
+  function ingestBomb(bomb) {
     const index = state.hazards.indexOf(bomb);
     if (index >= 0) state.hazards.splice(index, 1);
-    state.score += 125;
-    state.flash = Math.max(state.flash, 0.16);
-    try { globalThis.Lab8Audio?.play?.('destroy'); } catch {}
+    ingesting = true;
+    bomb.ingested = true;
+    playInhaleSound();
+    showInhaleBeam();
+    setTimeout(blastAfterIngestion, INGEST_DELAY_MS);
   }
 
   function inhale() {
-    if (!state.running || state.mode !== 'RUNNER') return false;
+    if (!state.running || state.mode !== 'RUNNER' || ingesting) return false;
+
+    playInhaleSound();
+    showInhaleBeam();
 
     const mouthX = guido.x + guido.width;
     const mouthY = guido.y + guido.height * 0.45;
@@ -76,7 +131,7 @@
       .sort((a, b) => a.dx - b.dx)[0];
 
     if (!candidate) return false;
-    implodeBomb(candidate.bomb);
+    ingestBomb(candidate.bomb);
     return true;
   }
 
