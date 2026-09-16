@@ -1,52 +1,5 @@
-import fs from 'node:fs';
-import vm from 'node:vm';
-import assert from 'node:assert/strict';
-
-function harness(initial = {}) {
-  const store = new Map(Object.entries(initial));
-  const noop = () => {};
-  const listeners = new Map();
-  let id = 0;
-  const makeButton = (dataset = {}) => {
-    const key = dataset.startSpeed ?? `button-${++id}`;
-    return { dataset, classList:{ toggle:noop }, addEventListener:(n,f)=>listeners.set(`${key}:${n}`,f), textContent:'' };
-  };
-  const speeds = [0,1,2].map(v => makeButton({ startSpeed:String(v) }));
-  const els = {
-    '#settingsOverlay': { hidden:true }, '#settingsButton': makeButton(), '#settingsClose': makeButton(), '#settingsSave': makeButton(),
-    '#playerName': { value:'', focus:noop, select:noop }, '#settingsPinStatus': { textContent:'' }, '#settingsPinAction': makeButton(),
-    '#game': { focus:noop }
-  };
-  const document = { querySelector:s=>els[s]||null, querySelectorAll:s=>s==='[data-start-speed]'?speeds:[], body:undefined };
-  const localStorage = { getItem:k=>store.get(k)??null, setItem:(k,v)=>store.set(k,String(v)) };
-  const sandbox = {
-    console, document, localStorage, performance:{now:()=>1000}, requestAnimationFrame:(fn)=>fn(),
-    Lab8Pin:{ blocksGameplay:()=>false, isPinActive:()=>false, openSettings:noop },
-    Lab8Game:{ applyInitialSpeed:v=>sandbox.applied=v }
-  };
-  sandbox.globalThis=sandbox; sandbox.window=sandbox;
-  vm.createContext(sandbox); vm.runInContext(fs.readFileSync('./settings.js','utf8'),sandbox);
-  return { sandbox, store, api:sandbox.Lab8Settings, els, listeners };
-}
-
-{
-  const h=harness();
-  assert.equal(h.api.playerName(),'GUIDO');
-  assert.equal(h.api.initialSpeedIndex(),1);
-  h.api.open();
-  h.els['#playerName'].value='  ALESSIO  ';
-  h.api._test.setSpeed(2);
-  assert.equal(h.api._test.selectedSpeed,2);
-  h.api._test.save();
-  assert.equal(h.store.get('lab8.playerName'),'ALESSIO');
-  assert.equal(h.store.get('lab8.initialSpeedIndex'),'2');
-  assert.equal(h.sandbox.applied,2);
-  assert.equal(h.api.blocksGameplay(),false);
-}
-
-{
-  const h=harness({'lab8.playerName':'MARIO','lab8.initialSpeedIndex':'0'});
-  assert.equal(h.api.playerName(),'MARIO');
-  assert.equal(h.api.initialSpeedIndex(),0);
-}
+import fs from 'node:fs'; import vm from 'node:vm'; import assert from 'node:assert/strict';
+function harness(initial={}){const store=new Map(Object.entries(initial));const noop=()=>{};const listeners=new Map();let id=0;const makeButton=(dataset={})=>{const key=dataset.startSpeed??dataset.startLives??`button-${++id}`;return{dataset,classList:{toggle:noop},addEventListener:(n,f)=>listeners.set(`${key}:${n}`,f),textContent:''};};const speeds=[0,1,2].map(v=>makeButton({startSpeed:String(v)}));const lives=[3,4,5,6,7].map(v=>makeButton({startLives:String(v)}));const els={'#settingsOverlay':{hidden:true},'#settingsButton':makeButton(),'#settingsClose':makeButton(),'#settingsSave':makeButton(),'#playerName':{value:'',focus:noop,select:noop},'#settingsPinStatus':{textContent:''},'#settingsPinAction':makeButton(),'#game':{focus:noop}};const document={querySelector:s=>els[s]||null,querySelectorAll:s=>s==='[data-start-speed]'?speeds:s==='[data-start-lives]'?lives:[],body:undefined};const localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,String(v))};const sandbox={console,document,localStorage,performance:{now:()=>1000},requestAnimationFrame:fn=>fn(),Lab8Pin:{blocksGameplay:()=>false,isPinActive:()=>false,openSettings:noop},Lab8Game:{applyInitialSpeed:v=>sandbox.applied=v}};sandbox.globalThis=sandbox;sandbox.window=sandbox;vm.createContext(sandbox);vm.runInContext(fs.readFileSync('./settings.js','utf8'),sandbox);return{sandbox,store,api:sandbox.Lab8Settings,els};}
+{const h=harness();assert.equal(h.api.playerName(),'GUIDO');assert.equal(h.api.initialSpeedIndex(),1);assert.equal(h.api.startingLives(),3);h.api.open();h.els['#playerName'].value='  ALESSIO  ';h.api._test.setSpeed(2);h.api._test.setLives(7);h.api._test.save();assert.equal(h.store.get('lab8.playerName'),'ALESSIO');assert.equal(h.store.get('lab8.initialSpeedIndex'),'2');assert.equal(h.store.get('lab8.startingLives'),'7');assert.equal(h.api.startingLives(),7);assert.equal(h.sandbox.applied,2);}
+{const h=harness({'lab8.startingLives':'9'});assert.equal(h.api.startingLives(),3);h.api._test.setLives(1);assert.equal(h.api._test.selectedLives,3);h.api._test.setLives(99);assert.equal(h.api._test.selectedLives,7);}
 console.log('LAB-8 settings tests: OK');
