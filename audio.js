@@ -2,33 +2,21 @@
   const MUSIC_URL='audio/alien-battle-loop.mp3';
   const AUDIO={context:null,master:null,music:null,musicStarted:false,musicReady:false};
   const music=new Audio(MUSIC_URL);
-  music.loop=true;
-  music.preload='auto';
-  music.volume=.07;
-  AUDIO.music=music;
-
-  const loading=document.getElementById('loadingOverlay');
-  const loadingText=document.getElementById('loadingText');
-  function finishLoading(){
-    if(AUDIO.musicReady)return;
-    AUDIO.musicReady=true;
-    if(loadingText)loadingText.textContent='PRONTO';
-    setTimeout(()=>{if(loading)loading.hidden=true},180);
-  }
-  function updateLoading(){
-    if(!loadingText)return;
-    if(music.buffered.length&&Number.isFinite(music.duration)&&music.duration>0){
-      const pct=Math.min(99,Math.round((music.buffered.end(music.buffered.length-1)/music.duration)*100));
-      loadingText.textContent=`CARICAMENTO AUDIO ${pct}%`;
-    }
-  }
-  music.addEventListener('progress',updateLoading);
-  music.addEventListener('canplaythrough',finishLoading,{once:true});
-  music.addEventListener('canplay',finishLoading,{once:true});
-  music.addEventListener('error',()=>{if(loadingText)loadingText.textContent='AUDIO NON DISPONIBILE';setTimeout(()=>{if(loading)loading.hidden=true},700)},{once:true});
-  music.load();
-  setTimeout(finishLoading,8000);
-
+  music.loop=true; music.preload='auto'; music.volume=.045; AUDIO.music=music;
+  const splash=document.getElementById('loadingOverlay');
+  const text=document.getElementById('loadingText');
+  const bar=document.getElementById('loadingBar');
+  let done=false;
+  function paint(p,label){const n=Math.max(0,Math.min(100,Math.round(p)));if(bar)bar.style.width=n+'%';if(text)text.textContent=label||`CARICAMENTO ${n}%`;}
+  function finish(){if(done)return;done=true;AUDIO.musicReady=true;paint(100,'PRONTO');setTimeout(()=>{if(splash){splash.classList.add('is-ready');setTimeout(()=>splash.hidden=true,260)}},180);}
+  function progress(){if(!music.buffered.length||!Number.isFinite(music.duration)||music.duration<=0)return;paint(Math.min(96,(music.buffered.end(music.buffered.length-1)/music.duration)*100));}
+  music.addEventListener('progress',progress);
+  music.addEventListener('loadedmetadata',()=>paint(20));
+  music.addEventListener('canplay',()=>{paint(85);setTimeout(finish,120)},{once:true});
+  music.addEventListener('canplaythrough',finish,{once:true});
+  music.addEventListener('error',()=>{paint(100,'AUDIO NON DISPONIBILE');setTimeout(finish,450)},{once:true});
+  paint(5); music.load();
+  setTimeout(()=>{if(!done){paint(95,'AVVIO...');finish()}},5000);
   function ensureAudio(){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;if(!AUDIO.context){AUDIO.context=new C();AUDIO.master=AUDIO.context.createGain();AUDIO.master.gain.value=.12;AUDIO.master.connect(AUDIO.context.destination)}if(AUDIO.context.state==='suspended')AUDIO.context.resume().catch(()=>{});return AUDIO.context}
   function startMusic(){if(AUDIO.musicStarted)return;AUDIO.musicStarted=true;music.play().catch(()=>{AUDIO.musicStarted=false})}
   function unlock(){ensureAudio();startMusic()}
