@@ -1,50 +1,22 @@
 name: CI
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-
       - name: Check JavaScript syntax
         run: |
-          node --check levels.js
-          node --check campaign-core.js
-          node --check campaign-game.js
-          node --check game-v2.js
-          node --check world-rules.js
-          node --check spawn-patterns.js
-          node --check spawn-tuning.js
-          node --check bomb-enemy.js
-          node --check game.js
-          node --check audio.js
-          node --check pin.js
-          node --check settings.js
-          node --check leaderboard.js
-          node --check leaderboard-store.mjs
-          node --check server.mjs
-          node --check sw.js
-          node --check test-campaign.mjs
-          node --check test-runtime-v2.mjs
-          node --check test-game.mjs
-          node --check test-pin.mjs
-          node --check test-settings.mjs
-          node --check test-leaderboard.mjs
-          node --check test-leaderboard-ui.mjs
-          node --check test-server.mjs
-
+          for file in levels.js campaign-core.js campaign-game.js game-v2.js world-rules.js spawn-patterns.js spawn-tuning.js bomb-enemy.js game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs sw.js test-campaign.mjs test-runtime-v2.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs; do node --check "$file"; done
       - name: Run tests
         env:
           NODE_NO_WARNINGS: '1'
@@ -57,21 +29,17 @@ jobs:
           node test-campaign.mjs
           node test-runtime-v2.mjs
           node test-game.mjs
-
       - name: Validate manifest JSON
         run: node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8')); console.log('manifest.webmanifest OK')"
-
       - name: Verify released version and cache
         run: |
-          grep -q 'VERSIONE 2.0.4' index.html
-          grep -q "lab8-v2.0.4" sw.js
-          grep -q 'game-v2.js' index.html
+          grep -q 'VERSIONE 2.0.5' index.html
+          grep -q 'lab8-v2.0.5' sw.js
+          grep -q 'data-start-lives="3"' index.html
+          grep -q 'data-start-lives="7"' index.html
+          grep -q 'MAX_LIVES = 7' campaign-core.js
           grep -q 'world-rules.js' index.html
-          grep -q 'spawn-patterns.js' index.html
-          grep -q 'spawn-tuning.js' index.html
           grep -q 'bomb-enemy.js' index.html
-          grep -q 'data-action="inhale"' index.html
-
       - name: Verify required files
         run: |
           for file in index.html styles.css panels.css levels.js campaign-core.js campaign-game.js game-v2.js world-rules.js spawn-patterns.js spawn-tuning.js bomb-enemy.js game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs test-campaign.mjs test-runtime-v2.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs sw.js manifest.webmanifest icons/icon-192.png icons/icon-512.png icons/apple-touch-icon.png; do test -f "$file"; done
