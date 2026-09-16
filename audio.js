@@ -1,7 +1,36 @@
 (() => {
-  const AUDIO={context:null,master:null,music:null,musicStarted:false};
+  const MUSIC_URL='audio/alien-battle-loop.mp3';
+  const AUDIO={context:null,master:null,music:null,musicStarted:false,musicReady:false};
+  const music=new Audio(MUSIC_URL);
+  music.loop=true;
+  music.preload='auto';
+  music.volume=.07;
+  AUDIO.music=music;
+
+  const loading=document.getElementById('loadingOverlay');
+  const loadingText=document.getElementById('loadingText');
+  function finishLoading(){
+    if(AUDIO.musicReady)return;
+    AUDIO.musicReady=true;
+    if(loadingText)loadingText.textContent='PRONTO';
+    setTimeout(()=>{if(loading)loading.hidden=true},180);
+  }
+  function updateLoading(){
+    if(!loadingText)return;
+    if(music.buffered.length&&Number.isFinite(music.duration)&&music.duration>0){
+      const pct=Math.min(99,Math.round((music.buffered.end(music.buffered.length-1)/music.duration)*100));
+      loadingText.textContent=`CARICAMENTO AUDIO ${pct}%`;
+    }
+  }
+  music.addEventListener('progress',updateLoading);
+  music.addEventListener('canplaythrough',finishLoading,{once:true});
+  music.addEventListener('canplay',finishLoading,{once:true});
+  music.addEventListener('error',()=>{if(loadingText)loadingText.textContent='AUDIO NON DISPONIBILE';setTimeout(()=>{if(loading)loading.hidden=true},700)},{once:true});
+  music.load();
+  setTimeout(finishLoading,8000);
+
   function ensureAudio(){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;if(!AUDIO.context){AUDIO.context=new C();AUDIO.master=AUDIO.context.createGain();AUDIO.master.gain.value=.12;AUDIO.master.connect(AUDIO.context.destination)}if(AUDIO.context.state==='suspended')AUDIO.context.resume().catch(()=>{});return AUDIO.context}
-  function startMusic(){if(AUDIO.musicStarted)return;AUDIO.musicStarted=true;const music=new Audio('audio/alien-battle-loop.mp3');music.loop=true;music.preload='auto';music.volume=.16;AUDIO.music=music;music.play().catch(()=>{AUDIO.musicStarted=false})}
+  function startMusic(){if(AUDIO.musicStarted)return;AUDIO.musicStarted=true;music.play().catch(()=>{AUDIO.musicStarted=false})}
   function unlock(){ensureAudio();startMusic()}
   ['pointerdown','keydown','touchstart'].forEach(type=>window.addEventListener(type,unlock,{once:true,passive:true}));
   function tone(f,d=.08,o={}){const a=ensureAudio();if(!a||!AUDIO.master)return;const{type='square',volume=.7,slide=0,delay=0}=o,s=a.currentTime+delay,osc=a.createOscillator(),g=a.createGain();osc.type=type;osc.frequency.setValueAtTime(Math.max(30,f),s);if(slide)osc.frequency.exponentialRampToValueAtTime(Math.max(30,f+slide),s+d);g.gain.setValueAtTime(Math.max(.0001,volume),s);g.gain.exponentialRampToValueAtTime(.0001,s+d);osc.connect(g);g.connect(AUDIO.master);osc.start(s);osc.stop(s+d+.02)}
