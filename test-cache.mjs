@@ -70,8 +70,10 @@ async function request(path, navigate = false) {
   const background = [];
   events.fetch({ request: req, respondWith: (promise) => { pending = promise; }, waitUntil: (promise) => background.push(promise) });
   const response = await pending;
+  // The browser may consume the navigation body before waitUntil completes.
+  const body = navigate && response ? await response.text() : null;
   await Promise.all(background);
-  return response;
+  return body === null ? response : new Response(body);
 }
 
 // Even before installation, legacy cached audio must not win.

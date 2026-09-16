@@ -27,12 +27,13 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET' || !url.href.startsWith(self.registration.scope) || url.pathname.includes('/api/')) return;
   if (request.mode === 'navigate') {
     event.respondWith(fetch(new Request(request, { cache: 'no-cache' })).then((response) => {
+      const offlineCopy = response.clone();
       event.waitUntil((async () => {
         // Refill after AGGIORNA, without putting another release's HTML
         // alongside this worker's offline assets.
-        if (response.ok && (await response.clone().text()).includes(`VERSIONE ${VERSION}`)) {
+        if (response.ok && (await offlineCopy.clone().text()).includes(`VERSIONE ${VERSION}`)) {
           const cache = await caches.open(CACHE_NAME);
-          await cache.put(new URL('./index.html', self.registration.scope).href, response.clone());
+          await cache.put(new URL('./index.html', self.registration.scope).href, offlineCopy);
         }
       })().catch(() => {}));
       return response;
