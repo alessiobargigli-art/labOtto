@@ -17,6 +17,8 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           for file in levels.js campaign-core.js campaign-game.js game-v2.js world-rules.js spawn-patterns.js spawn-tuning.js bomb-enemy.js game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs sw.js test-campaign.mjs test-runtime-v2.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs; do node --check "$file"; done
+      - name: Verify cache migration and release URLs
+        run: node test-cache.mjs
       - name: Run tests
         env:
           NODE_NO_WARNINGS: '1'
@@ -33,8 +35,6 @@ jobs:
         run: node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8')); console.log('manifest.webmanifest OK')"
       - name: Verify released version and cache
         run: |
-          grep -q 'VERSIONE 2.0.6' index.html
-          grep -q 'lab8-v2.0.6' sw.js
           grep -q 'data-start-lives="3"' index.html
           grep -q 'data-start-lives="7"' index.html
           grep -q 'MAX_LIVES = 7' campaign-core.js

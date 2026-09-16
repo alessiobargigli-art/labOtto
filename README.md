@@ -179,3 +179,11 @@ I principali parametri di bilanciamento del Boss sono centralizzati in `CONFIG`:
 ### Verifica Boss
 
 `node test-game.mjs` copre anche rarità/separazione del frigorifero, ingresso al Boss tramite colpo, salto senza ingresso, oggetti distruttibili e indistruttibili, collisione/Game Over, tre nuclei, vittoria, bonus, ritorno al runner e riuso degli stessi input di sparo/marcia. Safari/iPadOS fisico resta una verifica manuale: il codice mantiene gli stessi controlli Pointer Events, layout responsive e PWA già esistenti, ma non viene dichiarato testato su hardware reale.
+
+## 2.0.11 — Aggiornamento cache
+
+Script, CSS e musica usano URL con `?v=2.0.11`, così anche un vecchio service worker recupera i file nuovi. La registrazione e il controllo degli aggiornamenti avvengono all'inizio della pagina, indipendentemente dal gioco e dallo splash. Gli aggiornamenti diventano visibili alla successiva apertura o ricarica.
+
+Ogni release usa una cache separata per versione e percorso del sito. Il service worker legge solo la cache corrente e rimuove le precedenti cache dello stesso percorso; le cache legacy `lab8-v*` non vengono più consultate. I dati del giocatore in localStorage restano conservati. AGGIORNA svuota la cache del sito e ricarica con un URL nuovo.
+
+Per una nuova release aggiornare insieme `VERSION` in `sw.js`, badge e query `v` in `index.html`, e `MUSIC_URL` in `audio.js`. `node test-cache.mjs` verifica coerenza degli URL, migrazione da cache legacy, isolamento delle cache e fallback offline.

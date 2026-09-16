@@ -10,8 +10,8 @@ const worlds=fs.readFileSync(new URL('./world-rules.js',import.meta.url),'utf8')
 const styles=fs.readFileSync(new URL('./styles.css',import.meta.url),'utf8');
 const panels=fs.readFileSync(new URL('./panels.css',import.meta.url),'utf8');
 const manifest=JSON.parse(fs.readFileSync(new URL('./manifest.webmanifest',import.meta.url),'utf8'));
-assert.match(html,/VERSIONE 2\.0\.6/); assert.match(html,/data-start-lives="3"/); assert.match(html,/data-start-lives="7"/);
-for(const script of ['levels','campaign-core','game-v2','world-rules','spawn-patterns','spawn-tuning','bomb-enemy']) assert.match(html,new RegExp(`<script src="${script}\\.js"><\\/script>`));
+const version = /const VERSION = '([^']+)'/.exec(sw)[1]; assert.ok(html.includes(`VERSIONE ${version}`)); assert.match(html,/data-start-lives="3"/); assert.match(html,/data-start-lives="7"/);
+for(const script of ['levels','campaign-core','game-v2','world-rules','spawn-patterns','spawn-tuning','bomb-enemy']) assert.ok(html.includes(`<script src="${script}.js?v=${version}"></script>`));
 assert.match(html,/data-action="jump"/); assert.match(html,/data-action="shoot"/); assert.match(html,/data-action="inhale"/); assert.match(html,/data-action="slower"/); assert.match(html,/data-action="faster"/);
 assert.equal(manifest.orientation,'landscape'); assert.equal(manifest.display,'standalone');
 assert.match(styles,/display-mode:standalone/); assert.match(styles,/orientation:landscape/); assert.match(panels,/touch-action:pan-y/); assert.match(panels,/overflow-y:auto/);
@@ -21,5 +21,5 @@ for(const token of ['createCampaignState()','VITE','gainLife','loseLife','bossTy
 assert.match(core,/MIN_LIVES = 3/); assert.match(core,/MAX_LIVES = 7/); assert.match(core,/configuredLives/);
 assert.match(worlds,/bossAfterScore = Number\.POSITIVE_INFINITY/); assert.match(worlds,/boss-gateway/); assert.match(worlds,/fridgeWasShot/);
 assert.match(bomb,/type: 'bomb'/); assert.match(bomb,/INHALE_RANGE = 250/); assert.match(bomb,/blastAfterIngestion/);
-assert.match(sw,/lab8-v2\.0\.6/); assert.match(sw,/world-rules\.js/); assert.match(sw,/bomb-enemy\.js/);
-console.log('LAB-8 2.0.6 mobile PWA wiring: OK');
+assert.ok(sw.includes("const CACHE_NAME = `${CACHE_PREFIX}${VERSION}`")); assert.match(sw,/world-rules\.js/); assert.match(sw,/bomb-enemy\.js/);
+console.log('LAB-8 mobile PWA wiring: OK');

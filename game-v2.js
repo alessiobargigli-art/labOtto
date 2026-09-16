@@ -219,6 +219,5 @@ function render(){const p=palette();drawEnvironment(p);if(state.mode===MODES.BOS
 }
 
 let last=performance.now(); function loop(now){const dt=Math.min(MAX_DT,(now-last)/1000);last=now;update(dt);render();requestAnimationFrame(loop);} canvas.focus();requestAnimationFrame(loop);
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 
 globalThis.Lab8Game={applyInitialSpeed(index){if(state.mode===MODES.RUNNER&&state.score===0)state.speedIndex=Math.max(0,Math.min(2,Number(index)));},_test:{state,campaign,guido,level,makeHazard,loseLife,enterBossStage,startNextLevel}};
