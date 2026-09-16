@@ -33,11 +33,14 @@ jobs:
         run: node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8')); console.log('manifest.webmanifest OK')"
       - name: Verify released version and cache
         run: |
-          grep -q 'VERSIONE 2.0.5' index.html
-          grep -q 'lab8-v2.0.5' sw.js
+          grep -q 'VERSIONE 2.0.6' index.html
+          grep -q 'lab8-v2.0.6' sw.js
           grep -q 'data-start-lives="3"' index.html
           grep -q 'data-start-lives="7"' index.html
           grep -q 'MAX_LIVES = 7' campaign-core.js
+          grep -q 'orientation.*landscape' manifest.webmanifest
+          grep -q 'display-mode:standalone' styles.css
+          grep -q 'touch-action:pan-y' panels.css
           grep -q 'world-rules.js' index.html
           grep -q 'bomb-enemy.js' index.html
       - name: Verify required files
