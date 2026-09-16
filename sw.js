@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lab8-v2.0.5';
+const CACHE_NAME = 'lab8-v2.0.6';
 const APP_SHELL = ['./','./index.html','./styles.css','./panels.css','./levels.js','./campaign-core.js','./game-v2.js','./world-rules.js','./spawn-patterns.js','./spawn-tuning.js','./bomb-enemy.js','./audio.js','./pin.js','./settings.js','./leaderboard.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png'];
 self.addEventListener('install',(event)=>{event.waitUntil(caches.open(CACHE_NAME).then((cache)=>cache.addAll(APP_SHELL)));self.skipWaiting();});
 self.addEventListener('activate',(event)=>{event.waitUntil(caches.keys().then((keys)=>Promise.all(keys.filter((key)=>key!==CACHE_NAME).map((key)=>caches.delete(key)))));self.clients.claim();});
