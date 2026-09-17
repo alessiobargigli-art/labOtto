@@ -187,3 +187,9 @@ Script, CSS e musica usano URL con `?v=2.0.11`, così anche un vecchio service w
 Ogni release usa una cache separata per versione e percorso del sito. Il service worker legge solo la cache corrente e rimuove le precedenti cache dello stesso percorso; le cache legacy `lab8-v*` non vengono più consultate. I dati del giocatore in localStorage restano conservati. AGGIORNA svuota la cache del sito e ricarica con un URL nuovo.
 
 Per una nuova release aggiornare insieme `VERSION` in `sw.js`, badge e query `v` in `index.html`, e `MUSIC_URL` in `audio.js`. `node test-cache.mjs` verifica coerenza degli URL, migrazione da cache legacy, isolamento delle cache e fallback offline.
+
+## 2.0.12 — Viewport mobile
+
+Il layout usa lo spazio effettivamente visibile, riservando spazio a intestazione, comandi e safe area senza sottrarre altezze fisse del browser. `viewport.js` misura subito il viewport, segue resize, rotazione, fullscreen e ripristino della pagina, e mantiene entrambi i canvas nel rapporto 960×360. Il focus del gioco non fa scorrere la pagina. Badge e cache sono aggiornati insieme a 2.0.12.
+
+`test-viewport.mjs` verifica in Chromium mobile primo caricamento, reload, rotazione, cambi di altezza e safe area simulate. Richiede Playwright solo per i test; la CI lo installa in una cartella temporanea. Il gioco resta senza dipendenze runtime. Fullscreen/PWA e tastiera su telefoni fisici restano una verifica manuale.

@@ -16,7 +16,7 @@ jobs:
           node-version: '22'
       - name: Check JavaScript syntax
         run: |
-          for file in levels.js campaign-core.js campaign-game.js game-v2.js world-rules.js spawn-patterns.js spawn-tuning.js bomb-enemy.js game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs sw.js test-campaign.mjs test-runtime-v2.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs; do node --check "$file"; done
+          for file in viewport.js levels.js campaign-core.js campaign-game.js game-v2.js world-rules.js spawn-patterns.js spawn-tuning.js bomb-enemy.js game.js audio.js pin.js settings.js leaderboard.js leaderboard-store.mjs server.mjs sw.js test-campaign.mjs test-runtime-v2.mjs test-game.mjs test-pin.mjs test-settings.mjs test-leaderboard.mjs test-leaderboard-ui.mjs test-server.mjs; do node --check "$file"; done
       - name: Verify cache migration and release URLs
         run: node test-cache.mjs
       - name: Run tests
@@ -31,6 +31,12 @@ jobs:
           node test-campaign.mjs
           node test-runtime-v2.mjs
           node test-game.mjs
+      - name: Install browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/lab8-browser" --no-save --package-lock=false playwright@1.51.1
+          node "$RUNNER_TEMP/lab8-browser/node_modules/playwright/cli.js" install --with-deps chromium --only-shell
+      - name: Verify mobile viewport in Chromium
+        run: NODE_PATH="$RUNNER_TEMP/lab8-browser/node_modules" node test-viewport.mjs
       - name: Validate manifest JSON
         run: node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8')); console.log('manifest.webmanifest OK')"
       - name: Verify released version and cache

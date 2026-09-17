@@ -36,7 +36,7 @@
   function show() {
     if(globalThis.Lab8Pin?.blocksGameplay?.())return; open=true; selectedSpeed=initialSpeedIndex(); selectedLives=startingLives(); nameInput.value=playerName(); refreshSpeed(); refreshLives(); refreshPin(); overlay.hidden=false; overlay.scrollTop=0; requestAnimationFrame(()=>nameInput.focus({preventScroll:true}));
   }
-  function hide(){open=false;overlay.hidden=true;document.querySelector('#game')?.focus();}
+  function hide(){open=false;overlay.hidden=true;document.querySelector('#game')?.focus({preventScroll:true});}
   function save(){
     const name=nameInput.value.trim().slice(0,20)||'GUIDO'; localStorage.setItem(NAME_KEY,name); localStorage.setItem(SPEED_KEY,String(selectedSpeed)); localStorage.setItem(LIVES_KEY,String(selectedLives)); globalThis.Lab8Game?.applyInitialSpeed?.(selectedSpeed); hide();
   }

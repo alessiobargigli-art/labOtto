@@ -912,7 +912,7 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 
-canvas.focus();
+canvas.focus({preventScroll:true});
 requestAnimationFrame(loop);
 
 if ('serviceWorker' in navigator) {

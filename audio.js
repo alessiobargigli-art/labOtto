@@ -1,5 +1,5 @@
 (() => {
-  const MUSIC_URL='audio/alien-battle-loop.mp3?v=2.0.11';
+  const MUSIC_URL='audio/alien-battle-loop.mp3?v=2.0.12';
   const AUDIO={context:null,master:null,music:null,musicStarted:false,musicReady:false};
   const music=new Audio(MUSIC_URL);
   music.loop=true; music.preload='auto'; music.volume=.045; AUDIO.music=music;

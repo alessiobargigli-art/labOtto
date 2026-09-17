@@ -1,7 +1,7 @@
-const VERSION = '2.0.11';
+const VERSION = '2.0.12';
 const CACHE_PREFIX = `lab8:${self.registration.scope}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${VERSION}`;
-const APP_SHELL = ['./', './index.html', './styles.css', './panels.css', './levels.js', './campaign-core.js', './game-v2.js', './world-rules.js', './spawn-patterns.js', './spawn-tuning.js', './bomb-enemy.js', './audio.js', './pin.js', './settings.js', './leaderboard.js', './manifest.webmanifest', './audio/alien-battle-loop.mp3', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
+const APP_SHELL = ['./', './index.html', './styles.css', './viewport.js', './panels.css', './levels.js', './campaign-core.js', './game-v2.js', './world-rules.js', './spawn-patterns.js', './spawn-tuning.js', './bomb-enemy.js', './audio.js', './pin.js', './settings.js', './leaderboard.js', './manifest.webmanifest', './audio/alien-battle-loop.mp3', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 const assetUrl = (path) => new URL(/\.(js|css|mp3)$/.test(path) ? `${path}?v=${VERSION}` : path, self.registration.scope).href;
 
 self.addEventListener('install', (event) => {
