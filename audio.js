@@ -1,5 +1,5 @@
 (() => {
-  const MUSIC_URL='audio/alien-battle-loop.mp3?v=2.0.12';
+  const MUSIC_URL='audio/alien-battle-loop.mp3?v=2.0.13';
   const AUDIO={context:null,master:null,music:null,musicStarted:false,musicReady:false};
   const music=new Audio(MUSIC_URL);
   music.loop=true; music.preload='auto'; music.volume=.045; AUDIO.music=music;
@@ -18,12 +18,14 @@
   paint(5); music.load();
   setTimeout(()=>{if(!done){paint(95,'AVVIO...');finish()}},5000);
   function ensureAudio(){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;if(!AUDIO.context){AUDIO.context=new C();AUDIO.master=AUDIO.context.createGain();AUDIO.master.gain.value=.12;AUDIO.master.connect(AUDIO.context.destination)}if(AUDIO.context.state==='suspended')AUDIO.context.resume().catch(()=>{});return AUDIO.context}
-  function startMusic(){if(AUDIO.musicStarted)return;AUDIO.musicStarted=true;music.play().catch(()=>{AUDIO.musicStarted=false})}
+  function startMusic(){if(AUDIO.musicStarted&&!music.paused)return;AUDIO.musicStarted=true;music.play().catch(()=>{AUDIO.musicStarted=false})}
+  function pauseMusic(){music.pause()}
+  function resumeMusic(){if(AUDIO.musicStarted)music.play().catch(()=>{});else startMusic()}
   function unlock(){ensureAudio();startMusic()}
   ['pointerdown','keydown','touchstart'].forEach(type=>window.addEventListener(type,unlock,{once:true,passive:true}));
   function tone(f,d=.08,o={}){const a=ensureAudio();if(!a||!AUDIO.master)return;const{type='square',volume=.7,slide=0,delay=0}=o,s=a.currentTime+delay,osc=a.createOscillator(),g=a.createGain();osc.type=type;osc.frequency.setValueAtTime(Math.max(30,f),s);if(slide)osc.frequency.exponentialRampToValueAtTime(Math.max(30,f+slide),s+d);g.gain.setValueAtTime(Math.max(.0001,volume),s);g.gain.exponentialRampToValueAtTime(.0001,s+d);osc.connect(g);g.connect(AUDIO.master);osc.start(s);osc.stop(s+d+.02)}
   function play(n){switch(n){case'jump':tone(320,.09,{slide:210,volume:.55});break;case'shoot':tone(720,.055,{slide:-390,volume:.5});break;case'gear-up':tone(360,.055,{volume:.4});tone(520,.07,{delay:.055,volume:.45});break;case'gear-down':tone(520,.055,{volume:.4});tone(300,.07,{delay:.055,volume:.45});break;case'destroy':tone(260,.08,{type:'sawtooth',slide:-140,volume:.5});break;case'ricochet':tone(980,.045,{slide:-180,volume:.38});break;case'boss-enter':tone(110,.18,{type:'sawtooth',slide:70,volume:.55});break;case'boss-attack':tone(145,.1,{type:'sawtooth',slide:-45,volume:.38});break;case'weak-hit':tone(780,.08,{volume:.5});break;case'victory':[392,523,659,784].forEach((f,i)=>tone(f,.12,{delay:i*.1,volume:.42}));break;case'game-over':tone(190,.16,{slide:-80,volume:.48});break;case'restart':tone(495,.08,{volume:.4});break;case'refresh':tone(660,.06,{volume:.4});break}}
   function wrap(name,sound){const original=window[name];if(typeof original!=='function')return;window[name]=function(...args){play(typeof sound==='function'?sound(...args):sound);return original.apply(this,args)}}
   wrap('jump','jump');wrap('shoot','shoot');wrap('changeSpeed',d=>d>0?'gear-up':'gear-down');wrap('resetGame','restart');wrap('gameOver','game-over');wrap('enterBossStage','boss-enter');wrap('spawnBossAttack','boss-attack');wrap('returnToRunner','victory');wrap('explode','destroy');wrap('spark','ricochet');
-  window.Lab8Audio={play,startMusic};
+  window.Lab8Audio={play,startMusic,pauseMusic,resumeMusic};
 })();
