@@ -218,6 +218,6 @@ function render(){const p=palette();drawEnvironment(p);if(state.mode===MODES.BOS
   if(state.flash>0){ctx.globalAlpha=Math.min(.8,state.flash*2);rect(0,0,W,H,p.hot);ctx.globalAlpha=1;}
 }
 
-let last=performance.now(); function loop(now){const dt=Math.min(MAX_DT,(now-last)/1000);last=now;update(dt);render();requestAnimationFrame(loop);} canvas.focus();requestAnimationFrame(loop);
+let last=performance.now(); function loop(now){const dt=Math.min(MAX_DT,(now-last)/1000);last=now;update(dt);render();requestAnimationFrame(loop);} canvas.focus({preventScroll:true});requestAnimationFrame(loop);
 
 globalThis.Lab8Game={applyInitialSpeed(index){if(state.mode===MODES.RUNNER&&state.score===0)state.speedIndex=Math.max(0,Math.min(2,Number(index)));},_test:{state,campaign,guido,level,makeHazard,loseLife,enterBossStage,startNextLevel}};

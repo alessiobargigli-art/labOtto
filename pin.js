@@ -253,14 +253,14 @@
       }
       savePin(access.input);
       setMode(null);
-      gameCanvas.focus();
+      gameCanvas.focus({preventScroll:true});
       return;
     }
 
     if (access.mode === 'unlock') {
       if (access.input === storedPin()) {
         setMode(null);
-        gameCanvas.focus();
+        gameCanvas.focus({preventScroll:true});
       } else {
         access.input = '';
         setMessage('PIN ERRATO', 'error');
@@ -290,7 +290,7 @@
     localStorage.removeItem(PIN_KEY);
     localStorage.setItem(SETUP_KEY, '1');
     setMode(null);
-    gameCanvas.focus();
+    gameCanvas.focus({preventScroll:true});
   }
 
   function openSettings() {
@@ -301,7 +301,7 @@
   function closeSettings() {
     if (!['settings', 'disable-confirm', 'enable-enter', 'enable-confirm'].includes(access.mode)) return;
     setMode(null);
-    gameCanvas.focus();
+    gameCanvas.focus({preventScroll:true});
   }
 
   function settingsPrimaryAction() {

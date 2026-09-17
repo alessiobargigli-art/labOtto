@@ -72,7 +72,7 @@
   function hide() {
     open = false;
     overlay.hidden = true;
-    document.querySelector('#game')?.focus();
+    document.querySelector('#game')?.focus({preventScroll:true});
   }
   function showToast(text) {
     toast.textContent = text;
