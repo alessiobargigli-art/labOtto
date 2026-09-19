@@ -15,7 +15,7 @@
       hazardGap: [285, 500],
       palette: { sky:'#d8f3dc', dark:'#16324f', mid:'#2d6a4f', hot:'#f4a261', hazard:'#ffd60a' },
       nightPalette: { sky:'#10233c', dark:'#f1fa8c', mid:'#ffb703', hot:'#ff4d6d', hazard:'#ffd60a' },
-      hazards: ['tube','zombie-tube','fridge'],
+      hazards: ['tube','potion','potion-armored','fridge'],
     },
     {
       id: 'home',
@@ -30,7 +30,7 @@
       hazardGap: [300, 520],
       palette: { sky:'#f7e7ce', dark:'#4b2e2b', mid:'#a06b3b', hot:'#e76f51', hazard:'#f4d35e' },
       nightPalette: { sky:'#1d1a24', dark:'#f2cc8f', mid:'#81b29a', hot:'#e07a5f', hazard:'#f4d35e' },
-      hazards: ['chair','sofa','plane','bottle','fridge'],
+      hazards: ['television','wardrobe','pan','pan-armored','fridge'],
     },
     {
       id: 'underwater',
@@ -45,7 +45,7 @@
       hazardGap: [320, 560],
       palette: { sky:'#8ecae6', dark:'#023047', mid:'#219ebc', hot:'#ffb703', hazard:'#fb8500' },
       nightPalette: { sky:'#001219', dark:'#94d2bd', mid:'#0a9396', hot:'#ee9b00', hazard:'#ca6702' },
-      hazards: ['fish','boot','fridge'],
+      hazards: ['baby-octopus','flying-fish','flying-fish-armored','fridge'],
     },
     {
       id: 'mars',
@@ -60,7 +60,7 @@
       hazardGap: [330, 590],
       palette: { sky:'#e59866', dark:'#5b2333', mid:'#a44a3f', hot:'#ff6b35', hazard:'#ffd166' },
       nightPalette: { sky:'#1c1025', dark:'#f4a261', mid:'#9b5de5', hot:'#f15bb5', hazard:'#fee440' },
-      hazards: ['alien','spaceship','fridge'],
+      hazards: ['alien','alien-armored','spaceship','spaceship-armored','fridge'],
     },
   ];
 
