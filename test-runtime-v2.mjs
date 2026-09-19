@@ -36,3 +36,6 @@ assert.match(game,/TELETRASPORTO IN/);
 assert.match(game,/state\.hazards\.length<2/);
 assert.doesNotMatch(game,/b\.weakOpen=true;state\.hazards\.length=0/);
 assert.match(worlds,/game\.beginBossTeleport\(\)/);
+
+assert.match(game,/if\(state\.teleport\?\.arrival\)/);
+assert.match(game,/if\(state\.teleport\.timer<=0\) state\.teleport=null/);
