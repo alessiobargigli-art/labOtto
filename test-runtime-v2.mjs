@@ -24,3 +24,6 @@ assert.match(worlds,/bossAfterScore = Number\.POSITIVE_INFINITY/); assert.match(
 assert.match(bomb,/type: 'bomb'/); assert.match(bomb,/INHALE_RANGE = 250/); assert.match(bomb,/blastAfterIngestion/);
 assert.ok(sw.includes("const CACHE_NAME = `${CACHE_PREFIX}${VERSION}`")); assert.match(sw,/world-rules\.js/); assert.match(sw,/bomb-enemy\.js/);
 console.log('LAB-8 mobile PWA wiring: OK');
+
+for (const token of ['potion-armored','television','wardrobe','pan-armored','baby-octopus','flying-fish-armored','alien-armored','spaceship-armored']) assert.ok(worldRules.includes(token), `missing themed enemy: ${token}`);
+assert.ok(worldRules.includes("type: 'fridge'"), 'fridge boss gateway must remain');
