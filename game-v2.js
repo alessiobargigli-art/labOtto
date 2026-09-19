@@ -212,7 +212,35 @@ function drawEnvironment(p){
   rect(0,GROUND_Y,W,6,p.dark); for(let x=-((state.elapsed*currentSpeed())%32);x<W;x+=32)rect(x,GROUND_Y+12,18,4,p.mid);
 }
 function drawGuido(p){const x=guido.x,y=guido.y;const blink=campaign.invulnerable>0&&Math.floor(campaign.invulnerable*10)%2===0;if(blink)return;rect(x+7,y+6,21,16,p.mid);rect(x+4,y+21,26,11,p.dark);rect(x+10,y+11,4,4,p.sky);rect(x+21,y+11,4,4,p.sky);rect(x+28,y+22,9,5,p.hot);rect(x+9,y+32,6,6,p.mid);rect(x+22,y+32,6,6,p.mid);}
-function drawHazard(h,p){const x=h.x,y=h.y+Math.sin(h.phase||0)*1.5;if(h.destructible){rect(x,y,h.width,h.height,p.hot);rect(x+5,y+5,h.width-10,h.height-10,p.mid);rect(x+10,y+10,h.width-20,5,p.sky);}else{rect(x,y,h.width,h.height,p.dark);rect(x+5,y+5,h.width-10,h.height-10,p.mid);rect(x+9,y+9,h.width-18,5,p.hazard);} ctx.fillStyle=p.dark;ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText(h.type.toUpperCase().slice(0,8),x+h.width/2,y+h.height+2);ctx.textAlign='left';}
+function drawHazard(h,p){
+  const x=Math.round(h.x),y=Math.round(h.y+Math.sin(h.phase||0)*1.5),w=h.width,hh=h.height;
+  const px=(dx,dy,dw,dh,c)=>rect(x+dx,y+dy,dw,dh,c);
+  switch(h.type){
+    case 'tube':
+      px(10,0,w-20,5,p.sky);px(7,5,w-14,hh-9,p.dark);px(10,hh-18,w-20,14,p.hot);px(12,hh-15,w-24,4,p.hazard);break;
+    case 'potion': case 'potion-armored':
+      px(14,0,16,7,p.dark);px(10,7,24,6,p.mid);px(5,13,34,hh-13,h.destructible?p.hot:p.dark);px(10,18,24,hh-23,p.mid);px(14,21,8,6,p.hazard);break;
+    case 'television':
+      px(2,5,w-4,hh-10,p.dark);px(7,10,w-14,hh-22,p.sky);px(11,14,w-22,hh-30,p.hot);px(7,hh-5,7,5,p.dark);px(w-14,hh-5,7,5,p.dark);break;
+    case 'wardrobe':
+      px(2,0,w-4,hh,p.dark);px(6,5,w/2-7,hh-10,p.mid);px(w/2+1,5,w/2-7,hh-10,p.mid);px(w/2-5,hh/2,3,3,p.hazard);px(w/2+3,hh/2,3,3,p.hazard);break;
+    case 'pan': case 'pan-armored':
+      px(0,8,w-13,hh-10,h.destructible?p.mid:p.dark);px(5,12,w-23,hh-18,p.hot);px(w-14,hh/2-2,14,5,p.dark);break;
+    case 'baby-octopus':
+      px(7,0,w-14,18,p.mid);px(3,8,w-6,17,p.dark);px(9,9,5,5,p.sky);px(w-14,9,5,5,p.sky);for(let i=0;i<4;i++)px(4+i*8,23,5,hh-23,p.mid);break;
+    case 'flying-fish': case 'flying-fish-armored':
+      px(7,5,w-15,hh-10,h.destructible?p.mid:p.dark);px(0,9,10,hh-18,p.hot);px(w-13,8,10,hh-16,p.mid);px(w-12,9,3,3,p.sky);break;
+    case 'alien': case 'alien-armored':
+      px(8,0,w-16,12,h.destructible?p.mid:p.dark);px(4,8,w-8,18,p.dark);px(9,11,5,5,p.hazard);px(w-14,11,5,5,p.hazard);px(8,26,7,hh-26,p.mid);px(w-15,26,7,hh-26,p.mid);break;
+    case 'spaceship': case 'spaceship-armored':
+      px(10,0,w-20,7,p.mid);px(3,7,w-6,10,h.destructible?p.mid:p.dark);px(0,13,w,7,p.dark);px(8,17,7,5,p.hot);px(w-15,17,7,5,p.hot);break;
+    case 'fridge':
+      px(2,0,w-4,hh,p.dark);px(6,5,w-12,hh-10,p.sky);px(8,hh*.43,w-16,4,p.dark);px(w-11,12,3,14,p.hot);px(w-11,hh*.55,3,12,p.hot);break;
+    default:
+      if(h.destructible){px(0,0,w,hh,p.hot);px(5,5,w-10,hh-10,p.mid);}else{px(0,0,w,hh,p.dark);px(5,5,w-10,hh-10,p.mid);}
+  }
+  if(!h.destructible && !['fridge','tentacle','boss-solid'].includes(h.type)) { px(1,1,5,5,p.hazard); px(w-6,1,5,5,p.hazard); }
+}
 function drawPickup(pick,p){const y=pick.y+Math.sin(pick.phase)*5;rect(pick.x,y,pick.width,pick.height,p.hazard);rect(pick.x+5,y+5,14,14,p.hot);rect(pick.x+9,y+2,6,20,p.sky);rect(pick.x+2,y+9,20,6,p.sky);}
 function drawBoss(p){
   if(state.boss.type==='alien'||state.boss.type==='alien-ship'){
