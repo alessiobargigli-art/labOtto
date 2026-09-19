@@ -119,12 +119,25 @@ function enterBossStage(){
   state.boss={type:level().bossType,phase:'attack',timer:3.0,attackTimer:.7,hp:3,weakOpen:false,hitFlash:0,victoryTimer:0};
   state.transition=.8; play('boss-enter');
 }
-function alienBossOffset(){ return state.boss?.type==='alien' ? Math.sin(state.elapsed*3.2)*45 : 0; }
-function bossTarget(){ return state.boss.type==='alien' ? {x:W-180,y:145+alienBossOffset(),width:56,height:70} : {x:W-190,y:170,width:36,height:84}; }
+function alienBossOffset(){ return ['alien','alien-ship'].includes(state.boss?.type) ? Math.sin(state.elapsed*3.2)*45 : 0; }
+function bossTarget(){
+  if(state.boss.type==='alien'||state.boss.type==='alien-ship') return {x:W-190,y:132+alienBossOffset(),width:86,height:58};
+  if(state.boss.type==='octopus') return {x:W-210,y:120,width:74,height:58};
+  return {x:W-190,y:170,width:36,height:84};
+}
 function spawnBossAttack(){
-  const destructible=Math.random()<.58; const high=Math.random()<.25; const size=destructible?26:34;
   const speed=rand(level().hazardSpeed[0],level().hazardSpeed[1]);
-  state.hazards.push({type:destructible?'boss-breakable':'boss-solid',x:W-245,y:high?GROUND_Y-126:GROUND_Y-size,width:size,height:size,destructible,counter:destructible?'shoot':(high?'duck':'jump'),vx:-330*speed,phase:0,low:!high});
+  if(state.boss.type==='octopus'){
+    const high=Math.random()<.45;
+    const size=high?30:38;
+    state.hazards.push({type:'tentacle',x:W-250,y:high?GROUND_Y-128:GROUND_Y-size,width:size,height:size,destructible:false,counter:high?'duck':'jump',vx:-300*speed,phase:0,low:!high});
+  } else if(state.boss.type==='alien-ship'){
+    const high=Math.random()<.5;
+    state.hazards.push({type:'rocket',x:W-230,y:high?GROUND_Y-132:GROUND_Y-42,width:42,height:18,destructible:true,counter:'shoot',vx:-390*speed,phase:0,low:!high});
+  } else {
+    const destructible=Math.random()<.58; const high=Math.random()<.25; const size=destructible?26:34;
+    state.hazards.push({type:destructible?'boss-breakable':'boss-solid',x:W-245,y:high?GROUND_Y-126:GROUND_Y-size,width:size,height:size,destructible,counter:destructible?'shoot':(high?'duck':'jump'),vx:-330*speed,phase:0,low:!high});
+  }
   play('boss-attack');
 }
 function finishBoss(){ state.boss.phase='victory'; state.boss.victoryTimer=1.8; clearAction(); state.score+=1800; play('victory'); }
@@ -202,16 +215,26 @@ function drawGuido(p){const x=guido.x,y=guido.y;const blink=campaign.invulnerabl
 function drawHazard(h,p){const x=h.x,y=h.y+Math.sin(h.phase||0)*1.5;if(h.destructible){rect(x,y,h.width,h.height,p.hot);rect(x+5,y+5,h.width-10,h.height-10,p.mid);rect(x+10,y+10,h.width-20,5,p.sky);}else{rect(x,y,h.width,h.height,p.dark);rect(x+5,y+5,h.width-10,h.height-10,p.mid);rect(x+9,y+9,h.width-18,5,p.hazard);} ctx.fillStyle=p.dark;ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText(h.type.toUpperCase().slice(0,8),x+h.width/2,y+h.height+2);ctx.textAlign='left';}
 function drawPickup(pick,p){const y=pick.y+Math.sin(pick.phase)*5;rect(pick.x,y,pick.width,pick.height,p.hazard);rect(pick.x+5,y+5,14,14,p.hot);rect(pick.x+9,y+2,6,20,p.sky);rect(pick.x+2,y+9,20,6,p.sky);}
 function drawBoss(p){
-  if(state.boss.type==='alien'){
-    const x=W-245,y=100+alienBossOffset();rect(x+60,y,100,38,p.mid);rect(x+35,y+35,150,110,p.dark);rect(x+55,y+55,110,75,p.mid);rect(x+72,y+70,20,14,p.hazard);rect(x+128,y+70,20,14,p.hazard);rect(x+88,y+108,45,10,p.hot);rect(x+10,y+90,40,20,p.dark);rect(x+185,y+90,40,20,p.dark);
-  }else{const x=W-290,y=45;rect(x,y+65,250,GROUND_Y-y-65,p.dark);rect(x+25,y+35,200,30,p.mid);for(let r=0;r<4;r++)for(let c=0;c<3;c++)rect(x+35+c*65,y+95+r*42,24,20,p.mid);}
+  if(state.boss.type==='alien'||state.boss.type==='alien-ship'){
+    const x=W-265,y=92+alienBossOffset();
+    rect(x+70,y,110,28,p.mid);rect(x+35,y+28,180,54,p.dark);rect(x+60,y+48,130,42,p.mid);
+    rect(x+86,y+58,22,12,p.hazard);rect(x+142,y+58,22,12,p.hazard);rect(x+102,y+76,50,8,p.hot);
+    rect(x+10,y+54,48,18,p.dark);rect(x+192,y+54,48,18,p.dark);rect(x+20,y+76,28,8,p.hot);rect(x+202,y+76,28,8,p.hot);
+  } else if(state.boss.type==='octopus'){
+    const x=W-270,y=82;
+    rect(x+92,y,94,64,p.mid);rect(x+72,y+18,134,78,p.dark);rect(x+92,y+34,94,44,p.mid);
+    rect(x+112,y+44,14,12,p.hazard);rect(x+152,y+44,14,12,p.hazard);rect(x+128,y+66,24,8,p.hot);
+    for(let i=0;i<6;i++){const tx=x+58+i*28;const wave=Math.sin(state.elapsed*4+i)*12;rect(tx,y+92,18,74+wave,p.mid);rect(tx+4,y+150+wave,10,40,p.dark);}
+  } else {
+    const x=W-290,y=45;rect(x,y+65,250,GROUND_Y-y-65,p.dark);rect(x+25,y+35,200,30,p.mid);for(let r=0;r<4;r++)for(let c=0;c<3;c++)rect(x+35+c*65,y+95+r*42,24,20,p.mid);
+  }
   if(state.boss.phase==='vulnerable'&&state.boss.weakOpen){const t=bossTarget();rect(t.x-6,t.y-6,t.width+12,t.height+12,p.hazard);rect(t.x,t.y,t.width,t.height,p.hot);}
 }
 function drawHud(p){ctx.fillStyle=p.dark;ctx.font='bold 18px monospace';ctx.textBaseline='top';ctx.fillText(`SCORE ${String(Math.floor(state.score)).padStart(6,'0')}`,20,16);ctx.fillText(`VITE ${'♥'.repeat(campaign.lives)}${'·'.repeat(globalThis.Lab8Campaign.MAX_LIVES-campaign.lives)}`,20,40);ctx.textAlign='right';ctx.fillText(`LIVELLO ${campaign.levelIndex+1}/4 // ${level().name}`,W-20,16);ctx.fillText(`MARCIA ${state.speedIndex+1}/3`,W-20,40);ctx.textAlign='left';}
 function drawCentered(title,sub,p){ctx.fillStyle=`${p.sky}ee`;ctx.fillRect(150,105,660,150);ctx.strokeStyle=p.dark;ctx.lineWidth=4;ctx.strokeRect(150,105,660,150);ctx.fillStyle=p.dark;ctx.textAlign='center';ctx.font='bold 30px monospace';ctx.fillText(title,W/2,142);ctx.font='16px monospace';ctx.fillText(sub,W/2,188);ctx.textAlign='left';}
 function render(){const p=palette();drawEnvironment(p);if(state.mode===MODES.BOSS)drawBoss(p);for(const h of state.hazards)drawHazard(h,p);for(const q of state.pickups)drawPickup(q,p);for(const b of state.bullets){rect(b.x,b.y,b.width,b.height,p.hot);rect(b.x+b.width,b.y+1,4,2,p.dark);}for(const part of state.particles)rect(part.x,part.y,part.size,part.size,part.color);drawGuido(p);drawHud(p);
   if(state.transition>0 && state.mode!==MODES.BOSS)drawCentered(`LIVELLO ${campaign.levelIndex+1} // ${level().name}`,level().subtitle,p);
-  if(state.mode===MODES.BOSS){ctx.fillStyle=p.hazard;ctx.font='bold 18px monospace';ctx.fillText(`${state.boss.type==='alien'?'ALIENO GIGANTE':'MEGA PALAZZO'} // HP ${state.boss.hp}/3`,20,66);if(state.boss.phase==='vulnerable'){ctx.font='bold 34px monospace';ctx.textAlign='center';ctx.fillText('FIRE!',W/2,78);ctx.textAlign='left';}}
+  if(state.mode===MODES.BOSS){ctx.fillStyle=p.hazard;ctx.font='bold 18px monospace';const bossName=state.boss.type==='alien'?'ALIENO GIGANTE':state.boss.type==='alien-ship'?'ASTRONAVE ALIENA':state.boss.type==='octopus'?'POLIPO ABISSALE':'MEGA PALAZZO';ctx.fillText(`${bossName} // HP ${state.boss.hp}/3`,20,66);if(state.boss.phase==='vulnerable'){ctx.font='bold 34px monospace';ctx.textAlign='center';ctx.fillText('FIRE!',W/2,78);ctx.textAlign='left';}}
   if(state.mode===MODES.LEVEL_COMPLETE)drawCentered(`${level().name} COMPLETATO!`,'TAP / SPAZIO PER IL PROSSIMO LIVELLO',p);
   if(state.mode===MODES.GAME_COMPLETE)drawCentered('MISSIONE COMPLETATA!','HAI SUPERATO I 4 MONDI DI LAB-8',p);
   if(state.mode===MODES.GAME_OVER)drawCentered('GAME OVER',`PUNTEGGIO ${Math.floor(state.score)} // TAP PER RIPARTIRE`,p);
