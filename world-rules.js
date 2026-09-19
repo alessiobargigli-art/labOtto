@@ -13,21 +13,25 @@
   const CATALOGS = Object.freeze({
     lab: [
       { type: 'tube', destructible: true },
-      { type: 'zombie-tube', destructible: true },
+      { type: 'potion', destructible: true, flying: true },
+      { type: 'potion-armored', destructible: false, flying: true },
     ],
     home: [
-      { type: 'chair', destructible: false, tall: true },
-      { type: 'sofa', destructible: false, tall: true },
-      { type: 'plane', destructible: true, flying: true },
-      { type: 'bottle', destructible: true },
+      { type: 'television', destructible: true, tall: true },
+      { type: 'wardrobe', destructible: false, tall: true },
+      { type: 'pan', destructible: true, flying: true },
+      { type: 'pan-armored', destructible: false, flying: true },
     ],
     underwater: [
-      { type: 'fish', destructible: true, flying: true },
-      { type: 'boot', destructible: false, tall: true },
+      { type: 'baby-octopus', destructible: true },
+      { type: 'flying-fish', destructible: true, flying: true },
+      { type: 'flying-fish-armored', destructible: false, flying: true },
     ],
     mars: [
       { type: 'alien', destructible: true },
-      { type: 'spaceship', destructible: false, flying: true },
+      { type: 'alien-armored', destructible: false },
+      { type: 'spaceship', destructible: true, flying: true },
+      { type: 'spaceship-armored', destructible: false, flying: true },
     ],
   });
 
