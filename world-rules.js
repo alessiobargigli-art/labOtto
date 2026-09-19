@@ -2,7 +2,7 @@
   'use strict';
 
   const game = globalThis.Lab8Game?._test;
-  if (!game?.state || !game?.level || !game?.enterBossStage) return;
+  if (!game?.state || !game?.level || !game?.beginBossTeleport) return;
 
   const state = game.state;
   const level = game.level;
@@ -129,8 +129,7 @@
     if (state.mode !== 'RUNNER' || !fridgeWasShot()) return;
     state.hazards.length = 0;
     state.bullets.length = 0;
-    try { globalThis.Lab8Audio?.play?.('boss-enter'); } catch {}
-    game.enterBossStage();
+    game.beginBossTeleport();
     fridgeTimer = randomFridgeDelay();
   }
 
