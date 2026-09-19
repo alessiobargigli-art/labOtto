@@ -1,4 +1,4 @@
-const VERSION = '2.0.15';
+const VERSION = '2.0.16';
 const CACHE_PREFIX = `lab8:${self.registration.scope}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${VERSION}`;
 const APP_SHELL = ['./', './index.html', './styles.css', './viewport.js', './panels.css', './levels.js', './campaign-core.js', './game-v2.js', './world-rules.js', './spawn-patterns.js', './spawn-tuning.js', './bomb-enemy.js', './audio.js', './pause.js', './pin.js', './settings.js', './leaderboard.js', './manifest.webmanifest', './audio/alien-battle-loop.mp3', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];

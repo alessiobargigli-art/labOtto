@@ -159,10 +159,6 @@ function startNextLevel(){
 
 function updateBoss(dt){
   const b=state.boss; b.hitFlash=Math.max(0,b.hitFlash-dt); updatePhysics(dt);
-  if(state.teleport?.arrival){
-    state.teleport.timer=Math.max(0,state.teleport.timer-dt);
-    if(state.teleport.timer<=0) state.teleport=null;
-  }
   if(state.transition>0){state.transition=Math.max(0,state.transition-dt);return;}
   if(b.phase==='victory'){ b.victoryTimer-=dt; if(b.victoryTimer<=0) finishLevel(); return; }
   b.timer-=dt; b.attackTimer-=dt;
@@ -199,6 +195,10 @@ function updateRunner(dt){
 function update(dt){
   if(globalThis.Lab8Pin?.blocksGameplay?.()||globalThis.Lab8Settings?.blocksGameplay?.()||globalThis.Lab8Leaderboard?.blocksGameplay?.())return;
   state.flash=Math.max(0,state.flash-dt); state.transition=Math.max(0,state.transition-dt); guido.shootTimer=Math.max(0,guido.shootTimer-dt); campaign.invulnerable=Math.max(0,campaign.invulnerable-dt);
+  if(state.teleport?.arrival){
+    state.teleport.timer=Math.max(0,state.teleport.timer-dt);
+    if(state.teleport.timer<=0) state.teleport=null;
+  }
   for(const p of state.particles){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=500*dt;} state.particles=state.particles.filter(p=>p.life>0);
   if(!state.running && ![MODES.LEVEL_COMPLETE].includes(state.mode)) return;
   if(state.mode===MODES.LEVEL_COMPLETE)return;
