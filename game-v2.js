@@ -127,9 +127,10 @@ function enterBossStage(){
 }
 function alienBossOffset(){ return ['alien','alien-ship'].includes(state.boss?.type) ? Math.sin(state.elapsed*3.2)*45 : 0; }
 function bossTarget(){
-  if(state.boss.type==='alien'||state.boss.type==='alien-ship') return {x:W-190,y:132+alienBossOffset(),width:86,height:58};
-  if(state.boss.type==='octopus') return {x:W-210,y:120,width:74,height:58};
-  return {x:W-190,y:170,width:36,height:84};
+  // Punto debole centrato sul corpo visivo del boss.
+  if(state.boss.type==='alien'||state.boss.type==='alien-ship') return {x:W-187,y:142+alienBossOffset(),width:54,height:34};
+  if(state.boss.type==='octopus') return {x:W-189,y:126,width:52,height:38};
+  return {x:W-183,y:166,width:46,height:46};
 }
 function spawnBossAttack(){
   const speed=rand(level().hazardSpeed[0],level().hazardSpeed[1]);
@@ -255,8 +256,8 @@ function drawPickup(pick,p){const y=pick.y+Math.sin(pick.phase)*5;rect(pick.x,y,
 function drawBoss(p){
   if(state.boss.type==='alien'||state.boss.type==='alien-ship'){
     const x=W-265,y=92+alienBossOffset();
-    rect(x+70,y,110,28,p.mid);rect(x+35,y+28,180,54,p.dark);rect(x+60,y+48,130,42,p.mid);
-    rect(x+86,y+58,22,12,p.hazard);rect(x+142,y+58,22,12,p.hazard);rect(x+102,y+76,50,8,p.hot);
+    rect(x+78,y,94,30,p.mid);rect(x+42,y+28,166,62,p.dark);rect(x+66,y+43,118,52,p.mid);
+    rect(x+88,y+56,20,14,p.hazard);rect(x+142,y+56,20,14,p.hazard);rect(x+108,y+78,36,8,p.hot);
     rect(x+10,y+54,48,18,p.dark);rect(x+192,y+54,48,18,p.dark);rect(x+20,y+76,28,8,p.hot);rect(x+202,y+76,28,8,p.hot);
   } else if(state.boss.type==='octopus'){
     const x=W-270,y=82;
