@@ -17,7 +17,8 @@ assert.equal(manifest.orientation,'landscape'); assert.equal(manifest.display,'s
 assert.match(styles,/display-mode:standalone/); assert.match(styles,/orientation:landscape/); assert.match(panels,/touch-action:pan-y/); assert.match(panels,/overflow-y:auto/);
 for(const world of ['LABORATORIO','CASA',"SOTT\\'ACQUA",'MARTE']) assert.ok(levels.includes(world));
 for(const hazard of ['zombie-tube','sofa','plane','bottle','fish','boot','alien','spaceship','fridge']) assert.ok(levels.includes(hazard));
-for(const token of ['createCampaignState()','VITE','gainLife','loseLife','bossType','ALIENO GIGANTE','MEGA PALAZZO','advanceLevel','hazardReachable','clampHazardSpeed','alienBossOffset']) assert.ok(game.includes(token));
+for(const token of ['createCampaignState()','VITE','gainLife','loseLife','bossType','ALIENO GIGANTE','MEGA PALAZZO','POLIPO ABISSALE','ASTRONAVE ALIENA','tentacle','rocket','advanceLevel','hazardReachable','clampHazardSpeed','alienBossOffset']) assert.ok(game.includes(token));
+assert.match(levels,/bossType: 'octopus'/); assert.match(levels,/bossType: 'alien-ship'/);
 assert.match(core,/MIN_LIVES = 3/); assert.match(core,/MAX_LIVES = 7/); assert.match(core,/configuredLives/);
 assert.match(worlds,/bossAfterScore = Number\.POSITIVE_INFINITY/); assert.match(worlds,/boss-gateway/); assert.match(worlds,/fridgeWasShot/);
 assert.match(bomb,/type: 'bomb'/); assert.match(bomb,/INHALE_RANGE = 250/); assert.match(bomb,/blastAfterIngestion/);
