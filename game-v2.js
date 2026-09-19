@@ -159,6 +159,10 @@ function startNextLevel(){
 
 function updateBoss(dt){
   const b=state.boss; b.hitFlash=Math.max(0,b.hitFlash-dt); updatePhysics(dt);
+  if(state.teleport?.arrival){
+    state.teleport.timer=Math.max(0,state.teleport.timer-dt);
+    if(state.teleport.timer<=0) state.teleport=null;
+  }
   if(state.transition>0){state.transition=Math.max(0,state.transition-dt);return;}
   if(b.phase==='victory'){ b.victoryTimer-=dt; if(b.victoryTimer<=0) finishLevel(); return; }
   b.timer-=dt; b.attackTimer-=dt;
