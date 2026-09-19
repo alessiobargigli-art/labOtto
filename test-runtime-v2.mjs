@@ -25,5 +25,14 @@ assert.match(bomb,/type: 'bomb'/); assert.match(bomb,/INHALE_RANGE = 250/); asse
 assert.ok(sw.includes("const CACHE_NAME = `${CACHE_PREFIX}${VERSION}`")); assert.match(sw,/world-rules\.js/); assert.match(sw,/bomb-enemy\.js/);
 console.log('LAB-8 mobile PWA wiring: OK');
 
-for (const token of ['potion-armored','television','wardrobe','pan-armored','baby-octopus','flying-fish-armored','alien-armored','spaceship-armored']) assert.ok(worldRules.includes(token), `missing themed enemy: ${token}`);
-assert.ok(worldRules.includes("type: 'fridge'"), 'fridge boss gateway must remain');
+for (const token of ['potion-armored','television','wardrobe','pan-armored','baby-octopus','flying-fish-armored','alien-armored','spaceship-armored']) assert.ok(worlds.includes(token), `missing themed enemy: ${token}`);
+assert.ok(worlds.includes("type: 'fridge'"), 'fridge boss gateway must remain');
+
+assert.match(game,/BOSS_HP = 5/);
+assert.match(game,/TELEPORT:'TELEPORT'/);
+assert.match(game,/beginBossTeleport/);
+assert.match(game,/TELETRASPORTO OUT/);
+assert.match(game,/TELETRASPORTO IN/);
+assert.match(game,/state\.hazards\.length<2/);
+assert.doesNotMatch(game,/b\.weakOpen=true;state\.hazards\.length=0/);
+assert.match(worlds,/game\.beginBossTeleport\(\)/);
