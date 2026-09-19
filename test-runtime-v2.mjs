@@ -17,9 +17,22 @@ assert.equal(manifest.orientation,'landscape'); assert.equal(manifest.display,'s
 assert.match(styles,/display-mode:standalone/); assert.match(styles,/orientation:landscape/); assert.match(panels,/touch-action:pan-y/); assert.match(panels,/overflow-y:auto/);
 for(const world of ['LABORATORIO','CASA',"SOTT\\'ACQUA",'MARTE']) assert.ok(levels.includes(world));
 for(const hazard of ['zombie-tube','sofa','plane','bottle','fish','boot','alien','spaceship','fridge']) assert.ok(levels.includes(hazard));
-for(const token of ['createCampaignState()','VITE','gainLife','loseLife','bossType','ALIENO GIGANTE','MEGA PALAZZO','advanceLevel','hazardReachable','clampHazardSpeed','alienBossOffset']) assert.ok(game.includes(token));
+for(const token of ['createCampaignState()','VITE','gainLife','loseLife','bossType','ALIENO GIGANTE','MEGA PALAZZO','POLIPO ABISSALE','ASTRONAVE ALIENA','tentacle','rocket','advanceLevel','hazardReachable','clampHazardSpeed','alienBossOffset']) assert.ok(game.includes(token));
+assert.match(levels,/bossType: 'octopus'/); assert.match(levels,/bossType: 'alien-ship'/);
 assert.match(core,/MIN_LIVES = 3/); assert.match(core,/MAX_LIVES = 7/); assert.match(core,/configuredLives/);
 assert.match(worlds,/bossAfterScore = Number\.POSITIVE_INFINITY/); assert.match(worlds,/boss-gateway/); assert.match(worlds,/fridgeWasShot/);
 assert.match(bomb,/type: 'bomb'/); assert.match(bomb,/INHALE_RANGE = 250/); assert.match(bomb,/blastAfterIngestion/);
 assert.ok(sw.includes("const CACHE_NAME = `${CACHE_PREFIX}${VERSION}`")); assert.match(sw,/world-rules\.js/); assert.match(sw,/bomb-enemy\.js/);
 console.log('LAB-8 mobile PWA wiring: OK');
+
+for (const token of ['potion-armored','television','wardrobe','pan-armored','baby-octopus','flying-fish-armored','alien-armored','spaceship-armored']) assert.ok(worlds.includes(token), `missing themed enemy: ${token}`);
+assert.ok(worlds.includes("type: 'fridge'"), 'fridge boss gateway must remain');
+
+assert.match(game,/BOSS_HP = 5/);
+assert.match(game,/TELEPORT:'TELEPORT'/);
+assert.match(game,/beginBossTeleport/);
+assert.match(game,/TELETRASPORTO OUT/);
+assert.match(game,/TELETRASPORTO IN/);
+assert.match(game,/state\.hazards\.length<2/);
+assert.doesNotMatch(game,/b\.weakOpen=true;state\.hazards\.length=0/);
+assert.match(worlds,/game\.beginBossTeleport\(\)/);

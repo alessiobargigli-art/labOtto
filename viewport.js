@@ -35,4 +35,21 @@
   window.visualViewport?.addEventListener('resize', schedule);
   window.visualViewport?.addEventListener('scroll', schedule);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) schedule(); });
+
+  // iPad/iPhone Safari can still trigger native zoom/callout gestures even with
+  // user-scalable=no. Block them only on the game surface, while leaving form
+  // controls and scrollable panels usable.
+  const isEditable = (target) => target?.closest?.('input, textarea, select, [contenteditable="true"], .pixel-panel');
+  const isGameSurface = (target) => target?.closest?.('.game-frame, .titlebar, .loading-overlay');
+  for (const eventName of ['gesturestart', 'gesturechange', 'gestureend']) {
+    document.addEventListener(eventName, (event) => {
+      if (isGameSurface(event.target) && !isEditable(event.target)) event.preventDefault();
+    }, { passive: false });
+  }
+  document.addEventListener('dblclick', (event) => {
+    if (isGameSurface(event.target) && !isEditable(event.target)) event.preventDefault();
+  }, { passive: false });
+  document.addEventListener('contextmenu', (event) => {
+    if (isGameSurface(event.target) && !isEditable(event.target)) event.preventDefault();
+  });
 })();

@@ -65,3 +65,9 @@ try {
   await browser.close();
   server.close();
 }
+
+assert.match(viewport, /gesturestart/);
+assert.match(viewport, /gesturechange/);
+assert.match(viewport, /dblclick/);
+assert.match(viewport, /contextmenu/);
+assert.match(styles, /-webkit-touch-callout:none/);
